@@ -1,0 +1,6 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# VS6 files require CRLF line endings
+*.dsp text eol=crlf
+*.dsw text eol=crlf
