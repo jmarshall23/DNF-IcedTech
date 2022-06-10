@@ -569,20 +569,23 @@ void UDukeMeshInstance::ExportToOBJ(const char* fileName)
 	static SMacTri TempTris[4096];
 	static DnDukeVertex dnVerts[6645];
 
+	int numRealVerts = 0;
+
 	INT NumListTris = Mac->EvaluateTris(1, TempTris);
 	int numVerts = Mac->EvaluateVerts(1, 1.0, &verts[0]);
-
-	for (int i = 0; i < numVerts; i++)
-	{
-		dnVerts[i].xyz = verts[i];
-	}
 
 	for (int i = 0; i < NumListTris; i++)
 	{
 		for (int d = 0; d < 3; d++)
 		{
 			int index = TempTris[i].vertIndex[d];
-			dnVerts[index].uv = *TempTris[i].texUV[d];
+
+			dnVerts[numRealVerts].xyz = verts[index];
+			dnVerts[numRealVerts].uv = *TempTris[i].texUV[d];
+
+			dnVerts[numRealVerts].uv.y = 1.0 - dnVerts[numRealVerts].uv.y;
+
+			numRealVerts++;
 		}
 	}
 
@@ -607,22 +610,22 @@ void UDukeMeshInstance::ExportToOBJ(const char* fileName)
 	fprintf(f, "# This file has been generated from the DNF obj exporter by Justin Marshall\n");
 	
 	// Write out all the vertexes.
-	for (int i = 0; i < numVerts; i++)
+	for (int i = 0; i < numRealVerts; i++)
 	{
 		fprintf(f, "v %f %f %f\n", dnVerts[i].xyz.x, dnVerts[i].xyz.y, dnVerts[i].xyz.z);
 	}
 
 	// Write out all the UV's.
-	for (int i = 0; i < numVerts; i++)
+	for (int i = 0; i < numRealVerts; i++)
 	{
 		fprintf(f, "vt %f %f\n", dnVerts[i].uv.x, dnVerts[i].uv.y);
 	}
 
-	for (int i = 0; i < NumListTris; i++)
+	for (int i = 0; i < numRealVerts; i+=3)
 	{
-		int idx1 = TempTris[i].vertIndex[0] + 1;
-		int idx2 = TempTris[i].vertIndex[1] + 1;
-		int idx3 = TempTris[i].vertIndex[2] + 1;
+		int idx1 = 1 + i + 0;
+		int idx2 = 1 + i + 1;
+		int idx3 = 1 + i + 2;
 
 		fprintf(f, "f %d/%d %d/%d %d/%d\n", idx1, idx1, idx2, idx2, idx3, idx3);
 	}
