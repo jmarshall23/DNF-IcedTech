@@ -13,4 +13,5 @@ Native dnGame and dnAI classes with working PigCop.
 OpenAL driver support with OGG file loading.
 Compiles without x86 assembly.
 OBJ exporter inside of the Mesh Browser.
+Fixed Entity Picking in DukeED
 </pre>
