@@ -60,6 +60,8 @@ struct FDukeExportJoint
 	int parent;
 	FVector xyz;
 	FVector orient;
+
+	FVector	scale; // I hate you
 };
 
 struct FDukeExportVert
@@ -111,7 +113,7 @@ class ENGINE_API UDukeMeshInstance : public UMeshInstance
 
 // jmarshall
 	void GatherExportJoints(TArray< FDukeExportJoint>& joints);
-	void GatherExportMeshes(TArray< FDukeExportMesh>& meshes);
+	void GatherExportMeshes(const TArray< FDukeExportJoint>& joints, TArray< FDukeExportMesh>& meshes);
 
 	void ExportToMD5Mesh(const char* fileName);
 	void ExportToOBJ(const char *fileName);

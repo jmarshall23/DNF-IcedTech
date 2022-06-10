@@ -559,7 +559,7 @@ void UDukeMeshInstance::WriteTGA(const char* filename, FRainbowPtr& data, const 
 	free(buffer);
 }
 
-void UDukeMeshInstance::GatherExportMeshes(TArray< FDukeExportMesh>& meshes)
+void UDukeMeshInstance::GatherExportMeshes(const TArray< FDukeExportJoint>& joints, TArray< FDukeExportMesh>& meshes)
 {
 	FDukeExportMesh mesh;
 
@@ -601,9 +601,9 @@ void UDukeMeshInstance::GatherExportMeshes(TArray< FDukeExportMesh>& meshes)
 				assert(w.jointIndex != -1);
 
 				w.weightValue = vert->weights[d].factor;
-				w.x = vert->weights[d].offsetPos.x;
-				w.y = vert->weights[d].offsetPos.y;
-				w.z = vert->weights[d].offsetPos.z;
+				w.x = vert->weights[d].offsetPos.x * joints(w.jointIndex).scale.X;
+				w.y = vert->weights[d].offsetPos.y * joints(w.jointIndex).scale.Z;
+				w.z = vert->weights[d].offsetPos.z * joints(w.jointIndex).scale.Y;
 
 				mesh.weights.AddItem(w);
 				v.numWeights++;
@@ -649,17 +649,35 @@ void UDukeMeshInstance::GatherExportJoints(TArray< FDukeExportJoint>& joints)
 			assert(exportJoint.parent != -1);
 		}	
 
-		VCoords3 v = bone->GetCoords(true);
+		VCoords3 v = bone->GetCoords(false);
+
 		exportJoint.xyz.X = v.t.x;
 		exportJoint.xyz.Y = v.t.y;
 		exportJoint.xyz.Z = v.t.z;
 
 		VQuat3 q = VQuat3(v.r);
-		exportJoint.orient.X = q.v.x;
-		exportJoint.orient.Y = q.v.y;
-		exportJoint.orient.Z = q.v.z;
+		exportJoint.orient.X = 0;
+		exportJoint.orient.Y = 0;
+		exportJoint.orient.Z = 0;
+
+		exportJoint.scale.X = v.s.x;
+		exportJoint.scale.Y = v.s.y;
+		exportJoint.scale.Z = v.s.z;
 
 		joints.AddItem(exportJoint);
+	}
+
+	for (int i = 0; i < joints.Num(); i++)
+	{
+		FDukeExportJoint &exportJoint = joints(i);
+		if (exportJoint.parent != -1)
+		{
+			FDukeExportJoint& parentJoint = joints(exportJoint.parent);
+
+			exportJoint.xyz.X += parentJoint.xyz.X;
+			exportJoint.xyz.Y += parentJoint.xyz.Y;
+			exportJoint.xyz.Z += parentJoint.xyz.Z;
+		}
 	}
 }
 
@@ -673,7 +691,7 @@ void UDukeMeshInstance::ExportToMD5Mesh(const char* fileName)
 
 	GatherExportJoints(joints);
 
-	GatherExportMeshes(meshes);
+	GatherExportMeshes(joints, meshes);
 
 	FILE* f = fopen(fileName, "wb");
 
