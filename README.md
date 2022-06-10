@@ -1,7 +1,9 @@
 # DNF-IcedTech
 Duke Nukem Forever IcedTech Branch
 
-Welcome to the Duke Nukem Forever IcedTech Branch to compile simply open Visual Studio 2022 and do File->Open->Cmake and open the cmakelists file and run either DukeNukemForever.exe or DukeED.exe.
+Welcome to the Duke Nukem Forever IcedTech Branch to compile simply open Visual Studio 2022 and do File->Open->Cmake and open the cmakelists file and run either DukeNukemForever.exe or DukeED.exe. 
+
+Make sure to select x86-debug or x86-release. Compiling with x64 does not work yet. 
 
 # New Features:
 <pre>
