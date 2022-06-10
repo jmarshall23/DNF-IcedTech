@@ -9,6 +9,7 @@
 //============================================================================
 
 #include "EnginePrivate.h"
+#include <assert.h>
 
 //============================================================================
 //    DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS
@@ -556,6 +557,167 @@ void UDukeMeshInstance::WriteTGA(const char* filename, FRainbowPtr& data, const 
 	fclose(f);	
 
 	free(buffer);
+}
+
+void UDukeMeshInstance::GatherExportMeshes(TArray< FDukeExportMesh>& meshes)
+{
+	FDukeExportMesh mesh;
+
+	mesh.shaderName = TEXT("test.tga");
+
+	static SMacTri TempTris[4096];
+
+	INT NumListTris = Mac->EvaluateTris(1, TempTris);
+
+	for (int i = 0; i < NumListTris; i++)
+	{
+		for (int f = 0; f < 3; f++)
+		{
+			int index = TempTris[i].vertIndex[f];
+
+			CCpjSklVert* vert = &Mac->mSkeleton->m_Verts[index];
+			FDukeExportVert v;
+
+			v.numWeights = 0;
+			v.weightIndex = mesh.weights.Num();
+			v.u = TempTris[i].texUV[f]->x;
+			v.v = TempTris[i].texUV[f]->y;
+
+			for (int d = 0; d < vert->weights.GetCount(); d++)
+			{
+				FDukeExportWeight w;
+
+				w.jointIndex = -1;
+
+				for (int c = 0; c < Mac->mSkeleton->m_Bones.GetCount(); c++)
+				{
+					if (vert->weights[d].bone == Mac->mActorBones[c].mSklBone)
+					{
+						w.jointIndex = c;
+						break;
+					}
+				}
+
+				assert(w.jointIndex != -1);
+
+				w.weightValue = vert->weights[d].factor;
+				w.x = vert->weights[d].offsetPos.x;
+				w.y = vert->weights[d].offsetPos.y;
+				w.z = vert->weights[d].offsetPos.z;
+
+				mesh.weights.AddItem(w);
+				v.numWeights++;
+			}
+
+			mesh.verts.AddItem(v);
+		}
+	}
+
+	for (int i = 0; i < NumListTris; i++)
+	{
+		FDukeExportTri tri;
+		tri.tris[0] = (i * 3) + 0;
+		tri.tris[1] = (i * 3) + 1;
+		tri.tris[2] = (i * 3) + 2;
+		mesh.tris.AddItem(tri);
+	}
+
+	meshes.AddItem(mesh);
+}
+
+void UDukeMeshInstance::GatherExportJoints(TArray< FDukeExportJoint>& joints)
+{
+	for (int i = 0; i < Mac->mActorBones.GetCount(); i++)
+	{
+		CMacBone* bone = &Mac->mActorBones[i];
+		FDukeExportJoint exportJoint;
+
+		sprintf(exportJoint.boneName, bone->mSklBone->name.Str(), bone->mSklBone->name.Len());
+		exportJoint.parent = -1;
+
+		if (bone->mSklBone->parentBone != nullptr)
+		{
+			for (int d = 0; d < Mac->mActorBones.GetCount(); d++)
+			{
+				if (bone->mSklBone->parentBone == Mac->mActorBones[d].mSklBone)
+				{
+					exportJoint.parent = d;
+					break;
+				}
+			}
+
+			assert(exportJoint.parent != -1);
+		}	
+
+		VCoords3 v = bone->GetCoords(true);
+		exportJoint.xyz.X = v.t.x;
+		exportJoint.xyz.Y = v.t.y;
+		exportJoint.xyz.Z = v.t.z;
+
+		VQuat3 q = VQuat3(v.r);
+		exportJoint.orient.X = q.v.x;
+		exportJoint.orient.Y = q.v.y;
+		exportJoint.orient.Z = q.v.z;
+
+		joints.AddItem(exportJoint);
+	}
+}
+
+void UDukeMeshInstance::ExportToMD5Mesh(const char* fileName)
+{
+	TArray< FDukeExportJoint> joints;
+	TArray< FDukeExportMesh> meshes;
+
+	static VVec3 verts[6635];
+	int numVerts = Mac->EvaluateVerts(1, 1.0, &verts[0]);
+
+	GatherExportJoints(joints);
+
+	GatherExportMeshes(meshes);
+
+	FILE* f = fopen(fileName, "wb");
+
+	fprintf(f, "MD5Version 10\n");
+	fprintf(f, "commandline \"This file has been generated from the DNF MD5 exporter by Justin Marshall\"\n\n");
+
+	fprintf(f, "numJoints %d\n", joints.Num());
+	fprintf(f, "numMeshes %d\n", meshes.Num());
+
+	// Write out all the joints.
+	fprintf(f, "joints {\n");	
+	for (int i = 0; i < joints.Num(); i++)
+	{
+		fprintf(f, "\t\"%s\" %d ( %f %f %f ) ( %f %f %f )\n", joints(i).boneName, joints(i).parent, joints(i).xyz.X, joints(i).xyz.Y, joints(i).xyz.Z, joints(i).orient.X, joints(i).orient.Y, joints(i).orient.Z);
+	}
+	fprintf(f, "}\n");
+
+	// Write out all of the meshes. 
+	for (int i = 0; i < meshes.Num(); i++)
+	{
+		fprintf(f, "mesh {\n");
+		fprintf(f, "\tshader \"test\"\n");
+		fprintf(f, "\tnumverts %d\n\n", meshes(i).verts.Num());
+		for (int d = 0; d < meshes(i).verts.Num(); d++)
+		{
+			fprintf(f, "\tvert %d ( %f %f ) %d %d\n", d, meshes(i).verts(d).u, meshes(i).verts(d).v, meshes(i).verts(d).weightIndex, meshes(i).verts(d).numWeights);
+		}
+
+		fprintf(f, "\n\tnumtris %d\n\n", meshes(i).tris.Num());
+		for (int d = 0; d < meshes(i).tris.Num(); d++)
+		{
+			fprintf(f, "\ttri %d %d %d %d\n", d, meshes(i).tris(d).tris[0], meshes(i).tris(d).tris[1], meshes(i).tris(d).tris[2]);
+		}
+
+		fprintf(f, "\n\tnumweights %d\n\n", meshes(i).weights.Num());
+		for (int d = 0; d < meshes(i).weights.Num(); d++)
+		{
+			fprintf(f, "\tweight %d %d %f ( %f %f %f )\n", d, meshes(i).weights(d).jointIndex, meshes(i).weights(d).weightValue, meshes(i).weights(d).x, meshes(i).weights(d).y, meshes(i).weights(d).z);
+		}
+
+		fprintf(f, "}");
+	}
+	
+	fclose(f);
 }
 
 void UDukeMeshInstance::ExportToOBJ(const char* fileName)

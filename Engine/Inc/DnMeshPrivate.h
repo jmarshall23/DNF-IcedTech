@@ -53,6 +53,46 @@ class ODukeMacActor
 	}
 };
 
+// jmarshall
+struct FDukeExportJoint
+{
+	char boneName[512]; // Ask me how much I don't care that this isn't a FString!! Go ahead ask mee!!! :)
+	int parent;
+	FVector xyz;
+	FVector orient;
+};
+
+struct FDukeExportVert
+{
+	float u;
+	float v;
+	int weightIndex;
+	int numWeights;
+};
+
+struct FDukeExportTri
+{
+	int tris[3];
+};
+
+struct FDukeExportWeight
+{
+	int jointIndex;
+	float weightValue;
+	float x;
+	float y;
+	float z;
+};
+
+struct FDukeExportMesh
+{
+	FString shaderName;
+	TArray<FDukeExportVert> verts;
+	TArray<FDukeExportTri> tris;
+	TArray<FDukeExportWeight> weights;
+};
+// jmarshall end
+
 class ENGINE_API UDukeMeshInstance : public UMeshInstance
 {
 	DECLARE_CLASS(UDukeMeshInstance,UMeshInstance,CLASS_Transient)
@@ -70,6 +110,10 @@ class ENGINE_API UDukeMeshInstance : public UMeshInstance
 	FBox GetRenderBoundingBox(const AActor* Owner, UBOOL Exact);
 
 // jmarshall
+	void GatherExportJoints(TArray< FDukeExportJoint>& joints);
+	void GatherExportMeshes(TArray< FDukeExportMesh>& meshes);
+
+	void ExportToMD5Mesh(const char* fileName);
 	void ExportToOBJ(const char *fileName);
 	void WriteTGA(const char* filename, FRainbowPtr &data, const DWORD*palette, int width, int height, bool flipVertical);
 // jmarshall end

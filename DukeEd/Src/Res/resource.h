@@ -927,6 +927,7 @@
 #define IDMN_AB_UNPIN_CLASS             40426
 #define IDMN_GB_INVERT_SELECT			40427
 #define IDMM_EXPORT_MESH				40428
+#define IDMM_EXPORT_SKELMESH			40429
 
 // Next default values for new objects
 // 

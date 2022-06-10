@@ -845,6 +845,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Refresh View",               IDMN_REFRESH
         MENUITEM "&Export Mesh",                IDMM_EXPORT_MESH
+        MENUITEM "&Export Skel Mesh",           IDMM_EXPORT_SKELMESH
     END
     POPUP "&Mesh"
     BEGIN

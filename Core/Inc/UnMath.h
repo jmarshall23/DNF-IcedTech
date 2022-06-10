@@ -19,6 +19,72 @@ class  FScale;
 class  FGlobalMath;
 class  FMatrix;
 
+// jmarshall 
+#define SMALL_NUMBER		(1.e-8f)
+
+namespace UnrealPlatformMathSSE
+{
+	static FORCEINLINE float InvSqrt(float F)
+	{
+		// Performs two passes of Newton-Raphson iteration on the hardware estimate
+		//    v^-0.5 = x
+		// => x^2 = v^-1
+		// => 1/(x^2) = v
+		// => F(x) = x^-2 - v
+		//    F'(x) = -2x^-3
+
+		//    x1 = x0 - F(x0)/F'(x0)
+		// => x1 = x0 + 0.5 * (x0^-2 - Vec) * x0^3
+		// => x1 = x0 + 0.5 * (x0 - Vec * x0^3)
+		// => x1 = x0 + x0 * (0.5 - 0.5 * Vec * x0^2)
+		//
+		// This final form has one more operation than the legacy factorization (X1 = 0.5*X0*(3-(Y*X0)*X0)
+		// but retains better accuracy (namely InvSqrt(1) = 1 exactly).
+
+		const __m128 fOneHalf = _mm_set_ss(0.5f);
+		__m128 Y0, X0, X1, X2, FOver2;
+		float temp;
+
+		Y0 = _mm_set_ss(F);
+		X0 = _mm_rsqrt_ss(Y0);	// 1/sqrt estimate (12 bits)
+		FOver2 = _mm_mul_ss(Y0, fOneHalf);
+
+		// 1st Newton-Raphson iteration
+		X1 = _mm_mul_ss(X0, X0);
+		X1 = _mm_sub_ss(fOneHalf, _mm_mul_ss(FOver2, X1));
+		X1 = _mm_add_ss(X0, _mm_mul_ss(X0, X1));
+
+		// 2nd Newton-Raphson iteration
+		X2 = _mm_mul_ss(X1, X1);
+		X2 = _mm_sub_ss(fOneHalf, _mm_mul_ss(FOver2, X2));
+		X2 = _mm_add_ss(X1, _mm_mul_ss(X1, X2));
+
+		_mm_store_ss(&temp, X2);
+		return temp;
+	}
+
+	static FORCEINLINE float InvSqrtEst(float F)
+	{
+		// Performs one pass of Newton-Raphson iteration on the hardware estimate
+		const __m128 fOneHalf = _mm_set_ss(0.5f);
+		__m128 Y0, X0, X1, FOver2;
+		float temp;
+
+		Y0 = _mm_set_ss(F);
+		X0 = _mm_rsqrt_ss(Y0);	// 1/sqrt estimate (12 bits)
+		FOver2 = _mm_mul_ss(Y0, fOneHalf);
+
+		// 1st Newton-Raphson iteration
+		X1 = _mm_mul_ss(X0, X0);
+		X1 = _mm_sub_ss(fOneHalf, _mm_mul_ss(FOver2, X1));
+		X1 = _mm_add_ss(X0, _mm_mul_ss(X0, X1));
+
+		_mm_store_ss(&temp, X1);
+		return temp;
+	}
+}
+// jmarshall end
+
 // Fixed point conversion.
 __forceinline INT Fix  (INT A)		{ return A<<16; };
 __forceinline INT Fix  (FLOAT A)	{ return (INT)(A*65536.f); };
@@ -305,6 +371,49 @@ public:
 		else if( i == 1)	return Y;
 		else				return Z;
 	}
+// jmarshall
+	FVector GetSafeNormal(float Tolerance = SMALL_NUMBER) const
+	{
+		const float SquareSum = X * X + Y * Y + Z * Z;
+
+		// Not sure if it's safe to add tolerance in there. Might introduce too many errors
+		if (SquareSum == 1.f)
+		{
+			return *this;
+		}
+		else if (SquareSum < Tolerance)
+		{
+			FVector zero;
+			zero.X = zero.Y = zero.Z = 0;
+			return zero;
+		}
+		const float Scale = UnrealPlatformMathSSE::InvSqrt(SquareSum);
+		return FVector(X * Scale, Y * Scale, Z * Scale);
+	}
+
+
+	static FVector UnrealUp()
+	{
+		return FVector(0, 0, 1);
+	}
+
+	static float DotProduct(const FVector &v1, const FVector& v2)
+	{
+		return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
+	}
+
+
+	static FVector CrossProduct(FVector v1, FVector v2)
+	{
+		FVector result;
+
+		result[0] = v1[1] * v2[2] - v1[2] * v2[1];
+		result[1] = v1[2] * v2[0] - v1[0] * v2[2];
+		result[2] = v1[0] * v2[1] - v1[1] * v2[0];
+
+		return result;
+	}
+// jmarshall end
 
 	// Simple functions.
 	FLOAT Size() const
@@ -692,6 +801,8 @@ public:
 		V *= (FLOAT)appSin(inAngle*.5f);
 		S = (FLOAT)appCos(inAngle*.5f);
 	}
+
+	static FPlane LookQuatRotation(FVector lookAt, FVector upDirection);
 
 	FQuat& operator = (const FQuat& inQ) { V = inQ.V; S = inQ.S; return(*this); }
 	FQuat& operator += (const FQuat& inQ) { V += inQ.V; S += inQ.S; return(*this); }
