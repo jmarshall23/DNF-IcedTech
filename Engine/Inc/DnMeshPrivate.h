@@ -71,6 +71,7 @@ class ENGINE_API UDukeMeshInstance : public UMeshInstance
 
 // jmarshall
 	void ExportToOBJ(const char *fileName);
+	void WriteTGA(const char* filename, FRainbowPtr &data, const DWORD*palette, int width, int height, bool flipVertical);
 // jmarshall end
 
 	// UMeshInstance

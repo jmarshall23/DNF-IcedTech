@@ -517,6 +517,47 @@ struct DnDukeVertex
 	VVec2 uv;
 };
 
+// jmarshall
+void UDukeMeshInstance::WriteTGA(const char* filename, FRainbowPtr& data, const DWORD *palette, int width, int height, bool flipVertical) {
+	byte* buffer;
+	int		i, d;
+	int		bufferSize = width * height * 4 + 18;
+	int     imgStart = 18;
+
+	buffer = (byte*)malloc(bufferSize);
+	memset(buffer, 0, 18);
+	buffer[2] = 2;		// uncompressed type
+	buffer[12] = width & 255;
+	buffer[13] = width >> 8;
+	buffer[14] = height & 255;
+	buffer[15] = height >> 8;
+	buffer[16] = 32;	// pixel size
+	if (!flipVertical) {
+		buffer[17] = (1 << 5);	// flip bit, for normal top to bottom raster order
+	}
+
+	for (i = imgStart, d = imgStart; i < bufferSize; i += 4, d += 4) {
+		byte pixel[4];
+
+		memcpy(&pixel[0], &palette[*data.PtrBYTE++], sizeof(DWORD));
+
+		buffer[i] = pixel[0];		// red
+		buffer[i + 1] = pixel[1];		// green
+		buffer[i + 2] = pixel[2];		// blue
+		buffer[i + 3] = pixel[3];		// alpha
+	}
+
+	char tempFileName[512];
+	sprintf(tempFileName, "%s.tga", filename);
+
+	FILE* f = fopen(tempFileName, "wb");
+	fwrite(buffer, 1, bufferSize, f);
+	fflush(f);
+	fclose(f);	
+
+	free(buffer);
+}
+
 void UDukeMeshInstance::ExportToOBJ(const char* fileName)
 {
 	if (!Mesh)
@@ -545,6 +586,22 @@ void UDukeMeshInstance::ExportToOBJ(const char* fileName)
 		}
 	}
 
+	FTextureInfo info;
+	GetTexture(0)->Lock(info, appSeconds(), 0, NULL);
+
+	FRainbowPtr SourceBitmap = info.Mips[0]->DataPtr;
+
+    #define PACK_DATA(r, g, b, a) ((DWORD)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
+
+	DWORD AlphaPalette[256];
+	// Compute the alpha palette:
+	for (INT i = 0; i < NUM_PAL_COLORS; i++)
+		AlphaPalette[i] = PACK_DATA(info.Palette[i].R, info.Palette[i].G, info.Palette[i].B, info.Palette[i].A);
+
+	WriteTGA(fileName, SourceBitmap, AlphaPalette, info.Mips[0]->USize, info.Mips[0]->VSize, false);
+
+	GetTexture(0)->Unlock(info);
+
 	FILE* f = fopen(fileName, "wb");
 
 	fprintf(f, "# This file has been generated from the DNF obj exporter by Justin Marshall\n");
@@ -572,6 +629,7 @@ void UDukeMeshInstance::ExportToOBJ(const char* fileName)
 
 	fclose(f);
 }
+// jmarshall end
 
 void UDukeMeshInstance::SetMesh(UMesh* InMesh)
 {
