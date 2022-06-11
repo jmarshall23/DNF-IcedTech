@@ -347,6 +347,25 @@ public:
 		vX = vY ^ vZ; vX.Normalize();
 	}
 
+	VAxes3 ConvertToUnrealSpace() {
+		VAxes3 unmat;
+
+		unmat.vX[0] = vX[0];
+		unmat.vX[1] = vX[2];
+		unmat.vX[2] = vX[1];
+
+		unmat.vY[0] = vY[0];
+		unmat.vY[1] = vY[2];
+		unmat.vY[2] = vY[1];
+
+		unmat.vZ[0] = vZ[0];
+		unmat.vZ[1] = vZ[2];
+		unmat.vZ[2] = vZ[1];
+
+		return unmat;
+	}
+
+
 	VEC_INLINE VAxes3& operator = (const VAxes3& inF) { vX = inF.vX; vY = inF.vY; vZ = inF.vZ; return(*this); }
 	VEC_INLINE VAxes3& operator >>= (const VAxes3& inF) { *this = *this >> inF; return(*this); }
 	VEC_INLINE VAxes3& operator <<= (const VAxes3& inF) { *this = *this << inF; return(*this); }

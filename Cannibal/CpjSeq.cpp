@@ -114,7 +114,19 @@ NBool OCpjSequence::LoadChunk(void* inImagePtr, NDword inImageLen)
 			eulers.r = (float)iR->roll * M_PI / 32768.f;
 			eulers.p = (float)iR->pitch * M_PI / 32768.f;
 			eulers.y = (float)iR->yaw * M_PI / 32768.f;
-			oR->quat = VQuat3(~VAxes3(eulers));
+
+// jmarshall
+			VAxes3 axis = ~VAxes3(eulers);
+
+			oR->quat = VQuat3(axis);
+
+			VEulers3 eulers2;
+			eulers2.r = (float)-iR->yaw * M_PI / 32768.f;
+			eulers2.p = (float)-iR->pitch * M_PI / 32768.f;
+			eulers2.y = (float)-iR->roll * M_PI / 32768.f;
+
+			oR->UnrealQuat = VQuat3(~VAxes3(eulers2));
+// jmarshall end
 #endif
 		}
 		oF->scales.Add(iF->numBoneScale);

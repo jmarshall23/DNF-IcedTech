@@ -44,6 +44,7 @@ public:
     NSWord yaw;
 #ifndef CPJ_SEQ_NOQUATOPT
 	VQuat3 quat;
+	VQuat3 UnrealQuat;
 #endif
 	CCpjSeqRotate() { boneIndex = 0; roll = pitch = yaw = 0; }
 };

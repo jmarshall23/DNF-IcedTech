@@ -42,9 +42,9 @@ void UDukeMeshInstance::GetAnimBitsForTransform(OCpjSequence* sequence, FDukeExp
 
 	int jointIndex = -1;
 
-	rotates.quat.v.x = 0;
-	rotates.quat.v.y = 0;
-	rotates.quat.v.z = 0;
+	rotates.UnrealQuat.v.x = 0;
+	rotates.UnrealQuat.v.y = 0;
+	rotates.UnrealQuat.v.z = 0;
 
 	// We need to find this joint transform in the frame, if nothing then write out 0's for the transform.
 	for (int i = 0; i < sequence->m_BoneInfo.GetCount(); i++)
@@ -89,22 +89,25 @@ void UDukeMeshInstance::GetAnimBitsForTransform(OCpjSequence* sequence, FDukeExp
 		}
 	}
 
-	if(translates.translate.x != 0.0f)
+
+	FVector trans(translates.translate.x, translates.translate.y, translates.translate.z);
+
+	if(trans.X != 0.0f)
 		joint->animBits |= ANIM_TX;
 
-	if (translates.translate.y != 0.0f)
+	if (trans.Y != 0.0f)
 		joint->animBits |= ANIM_TY;
 
-	if (translates.translate.z != 0.0f)
+	if (trans.Z != 0.0f)
 		joint->animBits |= ANIM_TZ;
 
-	if (rotates.quat.v.x != 0.0f)
+	if (rotates.UnrealQuat.v.x != 0.0f)
 		joint->animBits |= ANIM_QX;
 
-	if (rotates.quat.v.y != 0.0f)
+	if (rotates.UnrealQuat.v.y != 0.0f)
 		joint->animBits |= ANIM_QY;
 
-	if (rotates.quat.v.z != 0.0f)
+	if (rotates.UnrealQuat.v.z != 0.0f)
 		joint->animBits |= ANIM_QZ;
 }
 
@@ -116,9 +119,9 @@ void UDukeMeshInstance::WriteAnimatedJointTransform(OCpjSequence* sequence, FILE
 
 	int jointIndex = -1;
 
-	rotates.quat.v.x = 0;
-	rotates.quat.v.y = 0;
-	rotates.quat.v.z = 0;
+	rotates.UnrealQuat.v.x = 0;
+	rotates.UnrealQuat.v.y = 0;
+	rotates.UnrealQuat.v.z = 0;
 
 	// We need to find this joint transform in the frame, if nothing then write out 0's for the transform.
 	for (int i = 0; i < sequence->m_BoneInfo.GetCount(); i++)
@@ -163,25 +166,27 @@ void UDukeMeshInstance::WriteAnimatedJointTransform(OCpjSequence* sequence, FILE
 		}
 	}
 
+	FVector trans(translates.translate.x, translates.translate.y, translates.translate.z);
+
 	fprintf(f, "\t");
 	if (joint->animBits) {
 		if (joint->animBits & ANIM_TX) {
-			fprintf(f, " %f", translates.translate.x);
+			fprintf(f, " %f", trans.X);
 		}
 		if (joint->animBits & ANIM_TY) {
-			fprintf(f, " %f", translates.translate.z);
+			fprintf(f, " %f", trans.Y);
 		}
 		if (joint->animBits & ANIM_TZ) {
-			fprintf(f, " %f", translates.translate.y);
+			fprintf(f, " %f", trans.Z);
 		}
 		if (joint->animBits & ANIM_QX) {
-			fprintf(f, " %f", rotates.quat.v.x);
+			fprintf(f, " %f", rotates.UnrealQuat.v.x);
 		}
 		if (joint->animBits & ANIM_QY) {
-			fprintf(f, " %f", rotates.quat.v.y);
+			fprintf(f, " %f", rotates.UnrealQuat.v.y);
 		}
 		if (joint->animBits & ANIM_QZ) {
-			fprintf(f, " %f", rotates.quat.v.z);
+			fprintf(f, " %f", rotates.UnrealQuat.v.z);
 		}
 	}
 	fprintf(f,"\n");
