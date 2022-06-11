@@ -34,139 +34,122 @@ void StripExtension(const char* in, char* out) {
 	*out = 0;
 }
 
-void UDukeMeshInstance::GetAnimBitsForTransform(OCpjSequence* sequence, FDukeExportJoint* joint, CCpjSeqFrame* frame)
+void UDukeMeshInstance::EvalBoneRelativeTransforms(OCpjSequence* sequence, CCpjSeqFrame* frm, VCoords3* frmDeltaCoords, NBool *bonesUsed)
 {
-	CCpjSeqTranslate translates;
-	CCpjSeqRotate rotates;
-	CCpjSeqScale scales;
+	CMacBone* bone;
+	NDword index;
 
-	int jointIndex = -1;
-
-	rotates.UnrealQuat.v.x = 0;
-	rotates.UnrealQuat.v.y = 0;
-	rotates.UnrealQuat.v.z = 0;
-
-	// We need to find this joint transform in the frame, if nothing then write out 0's for the transform.
-	for (int i = 0; i < sequence->m_BoneInfo.GetCount(); i++)
+	for (int i = 0; i < Mac->mActorBones.GetCount(); i++)
 	{
-		CCpjSeqBoneInfo& info = sequence->m_BoneInfo[i];
-
-		if (info.name == joint->boneName)
-		{
-			jointIndex = i;
-			break;
-		}
+		bonesUsed[i] = 0;
 	}
 
+	// map bone information from sequence
+	static CMacBone* boneMap[256];
+	for (i = 0; i < sequence->m_BoneInfo.GetCount(); i++)
+		boneMap[i] = Mac->FindBone(*sequence->m_BoneInfo[i].name);
 
-	if (jointIndex != -1)
+	for (i = 0; i < frm->translates.GetCount(); i++)
 	{
-		for (int i = 0; i < frame->translates.GetCount(); i++)
-		{
-			if (frame->translates[i].boneIndex == jointIndex)
-			{
-				translates = frame->translates[i];
-				break;
-			}
-		}
-
-		for (int i = 0; i < frame->rotates.GetCount(); i++)
-		{
-			if (frame->rotates[i].boneIndex == jointIndex)
-			{
-				rotates = frame->rotates[i];
-				break;
-			}
-		}
-
-		for (int i = 0; i < frame->scales.GetCount(); i++)
-		{
-			if (frame->scales[i].boneIndex == jointIndex)
-			{
-				scales = frame->scales[i];
-				break;
-			}
-		}
+		//bone = inActor->FindBone(*mSequence->m_BoneInfo[frm[ifrm]->translates[i].boneIndex].name);
+		bone = boneMap[frm->translates[i].boneIndex];
+		if (!bone)
+			continue;
+		index = bone - &Mac->mActorBones[0];
+		bonesUsed[index] = 1;
+		frmDeltaCoords[index].t = frm->translates[i].translate;
+		/*
+					NFloat desiredLength = mSequence->m_BoneInfo[frm[ifrm]->translates[i].boneIndex].srcLength;
+					NFloat actualLength = bone->mSklBone->length;
+					NFloat lengthScale = actualLength / desiredLength;
+					frmDeltaCoords[ifrm][index].t /= lengthScale;
+		*/
+	}
+	for (i = 0; i < frm->scales.GetCount(); i++)
+	{
+		//bone = inActor->FindBone(*mSequence->m_BoneInfo[frm[ifrm]->scales[i].boneIndex].name);
+		bone = boneMap[frm->scales[i].boneIndex];
+		if (!bone)
+			continue;
+		index = bone - &Mac->mActorBones[0];
+		bonesUsed[index] = 1;
+		frmDeltaCoords[index].s = frm->scales[i].scale;
+	}
+	for (i = 0; i < frm->rotates.GetCount(); i++)
+	{
+		//bone = inActor->FindBone(*mSequence->m_BoneInfo[frm[ifrm]->rotates[i].boneIndex].name);
+		bone = boneMap[frm->rotates[i].boneIndex];
+		if (!bone)
+			continue;
+		index = bone - &Mac->mActorBones[0];
+		bonesUsed[index] = 1;
+#if 0
+		VQuat3 q;
+		q.AxisAngle(VVec3(0, 0, 1), (float)frm[ifrm]->rotates[i].roll * M_PI / 32768.f); frmDeltaCoords[ifrm][index].r >>= q;
+		q.AxisAngle(VVec3(1, 0, 0), (float)frm[ifrm]->rotates[i].pitch * M_PI / 32768.f); frmDeltaCoords[ifrm][index].r >>= q;
+		q.AxisAngle(VVec3(0, 1, 0), (float)frm[ifrm]->rotates[i].yaw * M_PI / 32768.f); frmDeltaCoords[ifrm][index].r >>= q;
+#else
+#ifdef CPJ_SEQ_NOQUATOPT			
+		VEulers3 eulers;
+		eulers.r = (float)frm[ifrm]->rotates[i].roll * M_PI / 32768.f;
+		eulers.p = (float)frm[ifrm]->rotates[i].pitch * M_PI / 32768.f;
+		eulers.y = (float)frm[ifrm]->rotates[i].yaw * M_PI / 32768.f;
+		frmDeltaCoords[ifrm][index].r >>= (~eulers);
+#else			
+		frmDeltaCoords[index].r >>= frm->rotates[i].UnrealQuat;
+#endif // CPJ_SEQ_NOQUATOPT
+#endif // if 0
+		/*
+					NFloat desiredLength = mSequence->m_BoneInfo[frm[ifrm]->rotates[i].boneIndex].srcLength;
+					NFloat actualLength = bone->mSklBone->length;
+					NFloat lengthScale = actualLength / desiredLength;
+					q = VQuat3();
+					if (lengthScale < 1.f)
+						q.Slerp(VQuat3(VAxes3()), VQuat3(frmDeltaCoords[ifrm][index].r), 1.f-lengthScale, lengthScale, false);
+					else
+						q.Slerp(VQuat3(VAxes3()), VQuat3(frmDeltaCoords[ifrm][index].r), 0.f, lengthScale, false);
+					frmDeltaCoords[ifrm][index].r = q;
+		*/
 	}
 
+	for (i = 0; i < sequence->m_BoneInfo.GetCount(); i++)
+	{
+		if (!bonesUsed[i])
+			continue;
 
-	FVector trans(translates.translate.x, translates.translate.y, translates.translate.z);
+		// Lets put this into the right space.
+		frmDeltaCoords[i].t = VVec3(frmDeltaCoords[i].t.x, frmDeltaCoords[i].t.z, -frmDeltaCoords[i].t.y);
+	}
+}
 
-	if(trans.X != 0.0f)
+void UDukeMeshInstance::GetAnimBitsForTransform(OCpjSequence* sequence, FDukeExportJoint* joint, VCoords3& jointTransform)
+{
+	VQuat3 UnrealQuat(jointTransform.r);
+
+	if(jointTransform.t.x != 0.0f)
 		joint->animBits |= ANIM_TX;
 
-	if (trans.Y != 0.0f)
+	if (jointTransform.t.y != 0.0f)
 		joint->animBits |= ANIM_TY;
 
-	if (trans.Z != 0.0f)
+	if (jointTransform.t.z != 0.0f)
 		joint->animBits |= ANIM_TZ;
 
-	if (rotates.UnrealQuat.v.x != 0.0f)
+	if (UnrealQuat.v.x != 0.0f)
 		joint->animBits |= ANIM_QX;
 
-	if (rotates.UnrealQuat.v.y != 0.0f)
+	if (UnrealQuat.v.y != 0.0f)
 		joint->animBits |= ANIM_QY;
 
-	if (rotates.UnrealQuat.v.z != 0.0f)
+	if (UnrealQuat.v.z != 0.0f)
 		joint->animBits |= ANIM_QZ;
 }
 
-void UDukeMeshInstance::WriteAnimatedJointTransform(OCpjSequence* sequence, FILE* f, FDukeExportJoint *joint, CCpjSeqFrame* frame)
+void UDukeMeshInstance::WriteAnimatedJointTransform(OCpjSequence* sequence, FILE *f, FDukeExportJoint* joint, VCoords3& jointTransform)
 {
-	CCpjSeqTranslate translates;
-	CCpjSeqRotate rotates;
-	CCpjSeqScale scales;
+	VQuat3 UnrealQuat(jointTransform.r);
 
-	int jointIndex = -1;
-
-	rotates.UnrealQuat.v.x = 0;
-	rotates.UnrealQuat.v.y = 0;
-	rotates.UnrealQuat.v.z = 0;
-
-	// We need to find this joint transform in the frame, if nothing then write out 0's for the transform.
-	for (int i = 0; i < sequence->m_BoneInfo.GetCount(); i++)
-	{
-		CCpjSeqBoneInfo &info = sequence->m_BoneInfo[i];
-
-		if (info.name == joint->boneName)
-		{
-			jointIndex = i;
-			break;
-		}
-	}
-
-	
-	if (jointIndex != -1)
-	{
-		for (int i = 0; i < frame->translates.GetCount(); i++)
-		{
-			if (frame->translates[i].boneIndex == jointIndex)
-			{
-				translates = frame->translates[i];
-				break;
-			}
-		}
-
-		for (int i = 0; i < frame->rotates.GetCount(); i++)
-		{
-			if (frame->rotates[i].boneIndex == jointIndex)
-			{
-				rotates = frame->rotates[i];
-				break;
-			}
-		}
-
-		for (int i = 0; i < frame->scales.GetCount(); i++)
-		{
-			if (frame->scales[i].boneIndex == jointIndex)
-			{
-				scales = frame->scales[i];
-				break;
-			}
-		}
-	}
-
-	FVector trans(translates.translate.x, translates.translate.y, -translates.translate.z);
+	FVector trans(jointTransform.t.x, jointTransform.t.y, jointTransform.t.z);
 
 	fprintf(f, "\t");
 	if (joint->animBits) {
@@ -180,13 +163,13 @@ void UDukeMeshInstance::WriteAnimatedJointTransform(OCpjSequence* sequence, FILE
 			fprintf(f, " %f", trans.Z);
 		}
 		if (joint->animBits & ANIM_QX) {
-			fprintf(f, " %f", rotates.UnrealQuat.v.x);
+			fprintf(f, " %f", UnrealQuat.v.x);
 		}
 		if (joint->animBits & ANIM_QY) {
-			fprintf(f, " %f", rotates.UnrealQuat.v.y);
+			fprintf(f, " %f", UnrealQuat.v.y);
 		}
 		if (joint->animBits & ANIM_QZ) {
-			fprintf(f, " %f", rotates.UnrealQuat.v.z);
+			fprintf(f, " %f", UnrealQuat.v.z);
 		}
 	}
 	fprintf(f,"\n");
@@ -208,7 +191,16 @@ void UDukeMeshInstance::ExportSequence(const char* tempFileName, TArray< FDukeEx
 
 		for (int d = 0; d < sequence->m_Frames.GetCount(); d++)
 		{
-			GetAnimBitsForTransform(sequence, &joints(i), &sequence->m_Frames[d]);
+			VCoords3 boneCoords[256];
+			NBool bonesUsed[256];
+
+			EvalBoneRelativeTransforms(sequence, &sequence->m_Frames[d], &boneCoords[0], &bonesUsed[0]);
+			if (!bonesUsed[i])
+			{
+				continue;
+			}
+
+			GetAnimBitsForTransform(sequence, &joints(i), boneCoords[i]);
 		}
 
 		joints(i).firstComponent = numAnimatedComponents;
@@ -265,9 +257,19 @@ void UDukeMeshInstance::ExportSequence(const char* tempFileName, TArray< FDukeEx
 
 		CCpjSeqFrame* frame = &sequence->m_Frames[i];
 
+		VCoords3 boneCoords[256];
+		NBool bonesUsed[256];
+
+		EvalBoneRelativeTransforms(sequence, &sequence->m_Frames[i], &boneCoords[0], &bonesUsed[0]);
+
 		for (int d = 0; d < joints.Num(); d++)
 		{
-			WriteAnimatedJointTransform(sequence, f, &joints(d), frame);
+			if (!bonesUsed[d])
+			{
+				continue;
+			}
+
+			WriteAnimatedJointTransform(sequence, f, &joints(d), boneCoords[d]);
 		}
 
 		fprintf(f, "}\n");

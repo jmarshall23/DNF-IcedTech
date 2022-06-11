@@ -122,9 +122,9 @@ NBool OCpjSequence::LoadChunk(void* inImagePtr, NDword inImageLen)
 			oR->quat = VQuat3(axis);
 
 			VEulers3 eulers2;
-			eulers2.r = (float)-iR->yaw * M_PI / 32768.f;
-			eulers2.p = (float)-iR->pitch * M_PI / 32768.f;
-			eulers2.y = (float)-iR->roll * M_PI / 32768.f;
+			eulers2.r = (float)iR->yaw * M_PI / 32768.f;
+			eulers2.p = (float)iR->pitch * M_PI / 32768.f;
+			eulers2.y = (float)iR->roll * M_PI / 32768.f;
 
 			oR->UnrealQuat = VQuat3(~VAxes3(eulers2));
 // jmarshall end
