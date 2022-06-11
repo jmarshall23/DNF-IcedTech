@@ -34,6 +34,80 @@ void StripExtension(const char* in, char* out) {
 	*out = 0;
 }
 
+void UDukeMeshInstance::GetAnimBitsForTransform(OCpjSequence* sequence, FDukeExportJoint* joint, CCpjSeqFrame* frame)
+{
+	CCpjSeqTranslate translates;
+	CCpjSeqRotate rotates;
+	CCpjSeqScale scales;
+
+	int jointIndex = -1;
+
+	rotates.quat.v.x = 0;
+	rotates.quat.v.y = 0;
+	rotates.quat.v.z = 0;
+
+	// We need to find this joint transform in the frame, if nothing then write out 0's for the transform.
+	for (int i = 0; i < sequence->m_BoneInfo.GetCount(); i++)
+	{
+		CCpjSeqBoneInfo& info = sequence->m_BoneInfo[i];
+
+		if (info.name == joint->boneName)
+		{
+			jointIndex = i;
+			break;
+		}
+	}
+
+
+	if (jointIndex != -1)
+	{
+		for (int i = 0; i < frame->translates.GetCount(); i++)
+		{
+			if (frame->translates[i].boneIndex == jointIndex)
+			{
+				translates = frame->translates[i];
+				break;
+			}
+		}
+
+		for (int i = 0; i < frame->rotates.GetCount(); i++)
+		{
+			if (frame->rotates[i].boneIndex == jointIndex)
+			{
+				rotates = frame->rotates[i];
+				break;
+			}
+		}
+
+		for (int i = 0; i < frame->scales.GetCount(); i++)
+		{
+			if (frame->scales[i].boneIndex == jointIndex)
+			{
+				scales = frame->scales[i];
+				break;
+			}
+		}
+	}
+
+	if(translates.translate.x != 0.0f)
+		joint->animBits |= ANIM_TX;
+
+	if (translates.translate.y != 0.0f)
+		joint->animBits |= ANIM_TY;
+
+	if (translates.translate.z != 0.0f)
+		joint->animBits |= ANIM_TZ;
+
+	if (rotates.quat.v.x != 0.0f)
+		joint->animBits |= ANIM_QX;
+
+	if (rotates.quat.v.y != 0.0f)
+		joint->animBits |= ANIM_QY;
+
+	if (rotates.quat.v.z != 0.0f)
+		joint->animBits |= ANIM_QZ;
+}
+
 void UDukeMeshInstance::WriteAnimatedJointTransform(OCpjSequence* sequence, FILE* f, FDukeExportJoint *joint, CCpjSeqFrame* frame)
 {
 	CCpjSeqTranslate translates;
@@ -88,8 +162,29 @@ void UDukeMeshInstance::WriteAnimatedJointTransform(OCpjSequence* sequence, FILE
 			}
 		}
 	}
-	
-	//fprintf(f, "\t%f %f %f %f %f %f\n", translates.translate.x, translates.translate.z, translates.translate.y, rotates.quat.v.x, rotates.quat.v.y, rotates.quat.v.z);
+
+	fprintf(f, "\t");
+	if (joint->animBits) {
+		if (joint->animBits & ANIM_TX) {
+			fprintf(f, " %f", translates.translate.x);
+		}
+		if (joint->animBits & ANIM_TY) {
+			fprintf(f, " %f", translates.translate.z);
+		}
+		if (joint->animBits & ANIM_TZ) {
+			fprintf(f, " %f", translates.translate.y);
+		}
+		if (joint->animBits & ANIM_QX) {
+			fprintf(f, " %f", rotates.quat.v.x);
+		}
+		if (joint->animBits & ANIM_QY) {
+			fprintf(f, " %f", rotates.quat.v.y);
+		}
+		if (joint->animBits & ANIM_QZ) {
+			fprintf(f, " %f", rotates.quat.v.z);
+		}
+	}
+	fprintf(f,"\n");
 }
 
 void UDukeMeshInstance::ExportSequence(const char* tempFileName, TArray< FDukeExportJoint>& joints, OCpjSequence* sequence)
@@ -106,15 +201,17 @@ void UDukeMeshInstance::ExportSequence(const char* tempFileName, TArray< FDukeEx
 	{
 		joints(i).animBits = 0;
 
-		//joints(i).animBits |= ANIM_TX;
-		//joints(i).animBits |= ANIM_TY;
-		//joints(i).animBits |= ANIM_TZ;
-		//joints(i).animBits |= ANIM_QX;
-		//joints(i).animBits |= ANIM_QY;
-		//joints(i).animBits |= ANIM_QZ;
+		for (int d = 0; d < sequence->m_Frames.GetCount(); d++)
+		{
+			GetAnimBitsForTransform(sequence, &joints(i), &sequence->m_Frames[d]);
+		}
 
-		joints(i).firstComponent = 0;// numAnimatedComponents;
-		//numAnimatedComponents += 6;
+		joints(i).firstComponent = numAnimatedComponents;
+		for (int j = 0; j < 6; j++) {
+			if (joints(i).animBits & BIT(j)) {
+				numAnimatedComponents++;
+			}
+		}
 	}
 
 	sprintf(animFileName, "%s_%s.md5anim", tempFileName, sequence->GetName());

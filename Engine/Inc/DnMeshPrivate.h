@@ -118,6 +118,7 @@ class ENGINE_API UDukeMeshInstance : public UMeshInstance
 
 // jmarshall
 	void WriteAnimatedJointTransform(OCpjSequence* sequence, FILE* f, FDukeExportJoint *joint, CCpjSeqFrame* frame);
+	void GetAnimBitsForTransform(OCpjSequence* sequence, FDukeExportJoint* joint, CCpjSeqFrame* frame);
 
 	void ExportSequences(const char* fileName);
 	void ExportSequence(const char* fileName, TArray< FDukeExportJoint>& joints, OCpjSequence* sequence);
