@@ -113,6 +113,8 @@ class ENGINE_API UDukeMeshInstance : public UMeshInstance
 	FBox GetRenderBoundingBox(const AActor* Owner, UBOOL Exact);
 
 // jmarshall
+	void ExportSequences(const char* fileName);
+
 	void GatherExportJoints(TArray< FDukeExportJoint>& joints);
 	void GatherExportMeshes(const char *fileName, const TArray< FDukeExportJoint>& joints, TArray< FDukeExportMesh>& meshes);
 
