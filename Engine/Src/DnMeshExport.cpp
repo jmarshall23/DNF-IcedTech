@@ -166,7 +166,7 @@ void UDukeMeshInstance::WriteAnimatedJointTransform(OCpjSequence* sequence, FILE
 		}
 	}
 
-	FVector trans(translates.translate.x, translates.translate.y, translates.translate.z);
+	FVector trans(translates.translate.x, translates.translate.y, -translates.translate.z);
 
 	fprintf(f, "\t");
 	if (joint->animBits) {

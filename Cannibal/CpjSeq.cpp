@@ -110,6 +110,7 @@ NBool OCpjSequence::LoadChunk(void* inImagePtr, NDword inImageLen)
 			oR->pitch = iR->pitch;
 			oR->yaw = iR->yaw;
 #ifndef CPJ_SEQ_NOQUATOPT
+
 			VEulers3 eulers;
 			eulers.r = (float)iR->roll * M_PI / 32768.f;
 			eulers.p = (float)iR->pitch * M_PI / 32768.f;
