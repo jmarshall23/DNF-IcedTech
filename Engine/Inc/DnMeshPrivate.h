@@ -88,7 +88,8 @@ struct FDukeExportWeight
 
 struct FDukeExportMesh
 {
-	FString shaderName;
+	UTexture* texture;
+	char textureName[512];
 	TArray<FDukeExportVert> verts;
 	TArray<FDukeExportTri> tris;
 	TArray<FDukeExportWeight> weights;
@@ -113,10 +114,12 @@ class ENGINE_API UDukeMeshInstance : public UMeshInstance
 
 // jmarshall
 	void GatherExportJoints(TArray< FDukeExportJoint>& joints);
-	void GatherExportMeshes(const TArray< FDukeExportJoint>& joints, TArray< FDukeExportMesh>& meshes);
+	void GatherExportMeshes(const char *fileName, const TArray< FDukeExportJoint>& joints, TArray< FDukeExportMesh>& meshes);
 
 	void ExportToMD5Mesh(const char* fileName);
 	void ExportToOBJ(const char *fileName);
+	void ExportTexture(UTexture* texture, const char* fileName);
+
 	void WriteTGA(const char* filename, FRainbowPtr &data, const DWORD*palette, int width, int height, bool flipVertical);
 // jmarshall end
 

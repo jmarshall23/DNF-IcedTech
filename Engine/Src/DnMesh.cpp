@@ -519,6 +519,18 @@ struct DnDukeVertex
 };
 
 // jmarshall
+/*
+============
+COM_StripExtension
+============
+*/
+void StripExtension(const char* in, char* out) {
+	while (*in && *in != '.') {
+		*out++ = *in++;
+	}
+	*out = 0;
+}
+
 void UDukeMeshInstance::WriteTGA(const char* filename, FRainbowPtr& data, const DWORD *palette, int width, int height, bool flipVertical) {
 	byte* buffer;
 	int		i, d;
@@ -559,18 +571,60 @@ void UDukeMeshInstance::WriteTGA(const char* filename, FRainbowPtr& data, const 
 	free(buffer);
 }
 
-void UDukeMeshInstance::GatherExportMeshes(const TArray< FDukeExportJoint>& joints, TArray< FDukeExportMesh>& meshes)
-{
-	FDukeExportMesh mesh;
-
-	mesh.shaderName = TEXT("test.tga");
-
+void UDukeMeshInstance::GatherExportMeshes(const char* fileName, const TArray< FDukeExportJoint>& joints, TArray< FDukeExportMesh>& meshes)
+{	
 	static SMacTri TempTris[4096];
-
 	INT NumListTris = Mac->EvaluateTris(1, TempTris);
+
+	// First pass find all of the texture groups.
+	for (int i = 0; i < NumListTris; i++)
+	{
+		FDukeExportMesh* mesh = nullptr;
+
+		if (TempTris[i].texture == nullptr)
+			continue;
+
+		for (int d = 0; d < meshes.Num(); d++)
+		{
+			if (TempTris[i].texture->imagePtr == meshes(d).texture)
+			{
+				mesh = &meshes(d);
+			}
+		}
+
+		if (mesh == nullptr)
+		{
+			FDukeExportMesh newMesh;
+			newMesh.texture = (UTexture *)TempTris[i].texture->imagePtr;
+
+			char temp[512];
+			sprintf(temp, "%s", fileName);;
+			StripExtension(temp, temp);
+			sprintf(newMesh.textureName, "%s_%d", temp, meshes.Num());
+
+			ExportTexture(newMesh.texture, newMesh.textureName);
+
+			meshes.AddItem(newMesh);
+		}
+	}
 
 	for (int i = 0; i < NumListTris; i++)
 	{
+		FDukeExportMesh* mesh = nullptr;
+
+		if (TempTris[i].texture == nullptr)
+			continue;
+
+		for (int d = 0; d < meshes.Num(); d++)
+		{
+			if (TempTris[i].texture->imagePtr == meshes(d).texture)
+			{
+				mesh = &meshes(d);
+			}
+		}
+
+		assert(mesh != nullptr);
+
 		for (int f = 0; f < 3; f++)
 		{
 			int index = TempTris[i].vertIndex[f];
@@ -579,7 +633,7 @@ void UDukeMeshInstance::GatherExportMeshes(const TArray< FDukeExportJoint>& join
 			FDukeExportVert v;
 
 			v.numWeights = 0;
-			v.weightIndex = mesh.weights.Num();
+			v.weightIndex = mesh->weights.Num();
 			v.u = TempTris[i].texUV[f]->x;
 			v.v = TempTris[i].texUV[f]->y;
 
@@ -609,24 +663,19 @@ void UDukeMeshInstance::GatherExportMeshes(const TArray< FDukeExportJoint>& join
 				w.z = w.y;
 				w.y = z;
 
-				mesh.weights.AddItem(w);
+				mesh->weights.AddItem(w);
 				v.numWeights++;
 			}
 
-			mesh.verts.AddItem(v);
+			mesh->verts.AddItem(v);
+
+			FDukeExportTri tri;
+			tri.tris[0] = (mesh->tris.Num() * 3) + 0;
+			tri.tris[1] = (mesh->tris.Num() * 3) + 1;
+			tri.tris[2] = (mesh->tris.Num() * 3) + 2;
+			mesh->tris.AddItem(tri);
 		}
 	}
-
-	for (int i = 0; i < NumListTris; i++)
-	{
-		FDukeExportTri tri;
-		tri.tris[0] = (i * 3) + 0;
-		tri.tris[1] = (i * 3) + 1;
-		tri.tris[2] = (i * 3) + 2;
-		mesh.tris.AddItem(tri);
-	}
-
-	meshes.AddItem(mesh);
 }
 
 void UDukeMeshInstance::GatherExportJoints(TArray< FDukeExportJoint>& joints)
@@ -695,7 +744,7 @@ void UDukeMeshInstance::ExportToMD5Mesh(const char* fileName)
 
 	GatherExportJoints(joints);
 
-	GatherExportMeshes(joints, meshes);
+	GatherExportMeshes(fileName, joints, meshes);
 
 	FILE* f = fopen(fileName, "wb");
 
@@ -717,7 +766,7 @@ void UDukeMeshInstance::ExportToMD5Mesh(const char* fileName)
 	for (int i = 0; i < meshes.Num(); i++)
 	{
 		fprintf(f, "mesh {\n");
-		fprintf(f, "\tshader \"test\"\n");
+		fprintf(f, "\tshader \"%s.tga\"\n", meshes(i).textureName);
 		fprintf(f, "\tnumverts %d\n\n", meshes(i).verts.Num());
 		for (int d = 0; d < meshes(i).verts.Num(); d++)
 		{
@@ -740,6 +789,25 @@ void UDukeMeshInstance::ExportToMD5Mesh(const char* fileName)
 	}
 	
 	fclose(f);
+}
+
+void UDukeMeshInstance::ExportTexture(UTexture* texture, const char* fileName)
+{
+	FTextureInfo info;
+	texture->Lock(info, appSeconds(), 0, NULL);
+
+	FRainbowPtr SourceBitmap = info.Mips[0]->DataPtr;
+
+#define PACK_DATA(r, g, b, a) ((DWORD)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
+
+	DWORD AlphaPalette[256];
+	// Compute the alpha palette:
+	for (INT i = 0; i < NUM_PAL_COLORS; i++)
+		AlphaPalette[i] = PACK_DATA(info.Palette[i].R, info.Palette[i].G, info.Palette[i].B, info.Palette[i].A);
+
+	WriteTGA(fileName, SourceBitmap, AlphaPalette, info.Mips[0]->USize, info.Mips[0]->VSize, false);
+
+	texture->Unlock(info);
 }
 
 void UDukeMeshInstance::ExportToOBJ(const char* fileName)
@@ -773,21 +841,7 @@ void UDukeMeshInstance::ExportToOBJ(const char* fileName)
 		}
 	}
 
-	FTextureInfo info;
-	GetTexture(0)->Lock(info, appSeconds(), 0, NULL);
-
-	FRainbowPtr SourceBitmap = info.Mips[0]->DataPtr;
-
-    #define PACK_DATA(r, g, b, a) ((DWORD)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
-
-	DWORD AlphaPalette[256];
-	// Compute the alpha palette:
-	for (INT i = 0; i < NUM_PAL_COLORS; i++)
-		AlphaPalette[i] = PACK_DATA(info.Palette[i].R, info.Palette[i].G, info.Palette[i].B, info.Palette[i].A);
-
-	WriteTGA(fileName, SourceBitmap, AlphaPalette, info.Mips[0]->USize, info.Mips[0]->VSize, false);
-
-	GetTexture(0)->Unlock(info);
+	ExportTexture(GetTexture(0), fileName);
 
 	FILE* f = fopen(fileName, "wb");
 
