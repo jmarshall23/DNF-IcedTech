@@ -59,9 +59,13 @@ struct FDukeExportJoint
 	char boneName[512]; // Ask me how much I don't care that this isn't a FString!! Go ahead ask mee!!! :)
 	int parent;
 	FVector xyz;
-	FVector orient;
+	FVector local_xyz;
+	FVector orient;	
 
-	FVector	scale; // I hate you
+	int firstComponent;
+	int animBits;
+
+	FVector	scale; // I hate you	
 };
 
 struct FDukeExportVert
@@ -113,7 +117,10 @@ class ENGINE_API UDukeMeshInstance : public UMeshInstance
 	FBox GetRenderBoundingBox(const AActor* Owner, UBOOL Exact);
 
 // jmarshall
+	void WriteAnimatedJointTransform(OCpjSequence* sequence, FILE* f, FDukeExportJoint *joint, CCpjSeqFrame* frame);
+
 	void ExportSequences(const char* fileName);
+	void ExportSequence(const char* fileName, TArray< FDukeExportJoint>& joints, OCpjSequence* sequence);
 
 	void GatherExportJoints(TArray< FDukeExportJoint>& joints);
 	void GatherExportMeshes(const char *fileName, const TArray< FDukeExportJoint>& joints, TArray< FDukeExportMesh>& meshes);

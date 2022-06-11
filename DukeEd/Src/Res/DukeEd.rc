@@ -846,6 +846,7 @@ BEGIN
         MENUITEM "&Refresh View",               IDMN_REFRESH
         MENUITEM "&Export Mesh",                IDMM_EXPORT_MESH
         MENUITEM "&Export Skel Mesh",           IDMM_EXPORT_SKELMESH
+        MENUITEM "&Export Sequences",           IDMM_EXPORT_SEQUENCES
     END
     POPUP "&Mesh"
     BEGIN

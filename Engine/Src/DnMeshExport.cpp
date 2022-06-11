@@ -15,6 +15,13 @@ struct DnDukeVertex
 	VVec2 uv;
 };
 
+#define 	ANIM_TX   BIT( 0 )
+#define 	ANIM_TY   BIT( 1 )
+#define 	ANIM_TZ   BIT( 2 )
+#define 	ANIM_QX   BIT( 3 )
+#define 	ANIM_QY   BIT( 4 )
+#define 	ANIM_QZ   BIT( 5 )
+
 /*
 ============
 COM_StripExtension
@@ -25,6 +32,162 @@ void StripExtension(const char* in, char* out) {
 		*out++ = *in++;
 	}
 	*out = 0;
+}
+
+void UDukeMeshInstance::WriteAnimatedJointTransform(OCpjSequence* sequence, FILE* f, FDukeExportJoint *joint, CCpjSeqFrame* frame)
+{
+	CCpjSeqTranslate translates;
+	CCpjSeqRotate rotates;
+	CCpjSeqScale scales;
+
+	int jointIndex = -1;
+
+	rotates.quat.v.x = 0;
+	rotates.quat.v.y = 0;
+	rotates.quat.v.z = 0;
+
+	// We need to find this joint transform in the frame, if nothing then write out 0's for the transform.
+	for (int i = 0; i < sequence->m_BoneInfo.GetCount(); i++)
+	{
+		CCpjSeqBoneInfo &info = sequence->m_BoneInfo[i];
+
+		if (info.name == joint->boneName)
+		{
+			jointIndex = i;
+			break;
+		}
+	}
+
+	
+	if (jointIndex != -1)
+	{
+		for (int i = 0; i < frame->translates.GetCount(); i++)
+		{
+			if (frame->translates[i].boneIndex == jointIndex)
+			{
+				translates = frame->translates[i];
+				break;
+			}
+		}
+
+		for (int i = 0; i < frame->rotates.GetCount(); i++)
+		{
+			if (frame->rotates[i].boneIndex == jointIndex)
+			{
+				rotates = frame->rotates[i];
+				break;
+			}
+		}
+
+		for (int i = 0; i < frame->scales.GetCount(); i++)
+		{
+			if (frame->scales[i].boneIndex == jointIndex)
+			{
+				scales = frame->scales[i];
+				break;
+			}
+		}
+	}
+	
+	//fprintf(f, "\t%f %f %f %f %f %f\n", translates.translate.x, translates.translate.z, translates.translate.y, rotates.quat.v.x, rotates.quat.v.y, rotates.quat.v.z);
+}
+
+void UDukeMeshInstance::ExportSequence(const char* tempFileName, TArray< FDukeExportJoint>& joints, OCpjSequence* sequence)
+{
+	char animFileName[512];
+	int numAnimatedComponents = 0;
+
+	sequence->CacheIn();
+
+	if (sequence->m_Frames.GetCount() == 0)
+		return;
+
+	for (int i = 0; i < joints.Num(); i++)
+	{
+		joints(i).animBits = 0;
+
+		//joints(i).animBits |= ANIM_TX;
+		//joints(i).animBits |= ANIM_TY;
+		//joints(i).animBits |= ANIM_TZ;
+		//joints(i).animBits |= ANIM_QX;
+		//joints(i).animBits |= ANIM_QY;
+		//joints(i).animBits |= ANIM_QZ;
+
+		joints(i).firstComponent = 0;// numAnimatedComponents;
+		//numAnimatedComponents += 6;
+	}
+
+	sprintf(animFileName, "%s_%s.md5anim", tempFileName, sequence->GetName());
+
+	FILE* f = fopen(animFileName, "wb");
+
+	fprintf(f, "MD5Version 10\n");
+	fprintf(f, "commandline \"This file has been generated from the DNF MD5 exporter by Justin Marshall\"\n\n");
+
+	fprintf(f, "numFrames %d\n", sequence->m_Frames.GetCount());
+	fprintf(f, "numJoints %d\n", joints.Num());
+	fprintf(f, "frameRate 24\n");
+	fprintf(f, "numAnimatedComponents %d\n", numAnimatedComponents); // All components enabled.
+
+	fprintf(f, "\nhierarchy {\n");
+	for (int i = 0; i < joints.Num(); i++)
+	{
+		FDukeExportJoint& joint = joints(i);
+
+		if (joint.parent != -1) {
+			fprintf(f, "\t\"%s\"\t%d %d %d\n", joint.boneName, joint.parent, joint.animBits, joint.firstComponent);
+		}
+		else {
+			fprintf(f, "\t\"%s\"\t-1 %d %d\n", joint.boneName, joint.animBits, joint.firstComponent);
+		}
+	}
+	fprintf(f, "}\n");
+
+	// write the frame bounds
+	fprintf(f, "\nbounds {\n");
+	for (int i = 0; i < sequence->m_Frames.GetCount(); i++) {
+		fprintf(f, "\t( -200 -200 -200 ) ( 200 200 200 )\n");
+	}
+	fprintf(f, "}\n");
+
+	fprintf(f, "\nbaseframe {\n");
+	for (int i = 0; i < joints.Num(); i++)
+	{
+		fprintf(f, "\t( %f %f %f ) ( %f %f %f )\n", joints(i).local_xyz.X, joints(i).local_xyz.Y, joints(i).local_xyz.Z, joints(i).orient.X, joints(i).orient.Y, joints(i).orient.Z);
+	}
+	fprintf(f, "}\n");
+
+	for (int i = 0; i < sequence->m_Frames.GetCount(); i++)
+	{
+		fprintf(f, "\nframe %d {\n", i);
+
+		CCpjSeqFrame* frame = &sequence->m_Frames[i];
+
+		for (int d = 0; d < joints.Num(); d++)
+		{
+			WriteAnimatedJointTransform(sequence, f, &joints(d), frame);
+		}
+
+		fprintf(f, "}\n");
+	}
+
+	fclose(f);
+}
+
+void UDukeMeshInstance::ExportSequences(const char* fileName)
+{
+	TArray< FDukeExportJoint> joints;
+
+	char tempFileName[512];
+
+	GatherExportJoints(joints);
+
+	StripExtension(fileName, tempFileName);
+
+	for (int i = 0; i < Mac->mSequences.GetCount(); i++)
+	{
+		ExportSequence(tempFileName, joints, Mac->mSequences[i]);
+	}
 }
 
 void UDukeMeshInstance::WriteTGA(const char* filename, FRainbowPtr& data, const DWORD* palette, int width, int height, bool flipVertical) {
@@ -65,18 +228,6 @@ void UDukeMeshInstance::WriteTGA(const char* filename, FRainbowPtr& data, const 
 	fclose(f);
 
 	free(buffer);
-}
-
-void UDukeMeshInstance::ExportSequences(const char* fileName)
-{
-	TArray< FDukeExportJoint> joints;
-
-	GatherExportJoints(joints);
-
-	for (int i = 0; i < Mac->mSequences.GetCount(); i++)
-	{
-
-	}
 }
 
 void UDukeMeshInstance::GatherExportMeshes(const char* fileName, const TArray< FDukeExportJoint>& joints, TArray< FDukeExportMesh>& meshes)
@@ -215,6 +366,11 @@ void UDukeMeshInstance::GatherExportJoints(TArray< FDukeExportJoint>& joints)
 		exportJoint.xyz.X = v.t.x;
 		exportJoint.xyz.Y = v.t.z;
 		exportJoint.xyz.Z = v.t.y;
+
+		exportJoint.local_xyz.X = v.t.x;
+		exportJoint.local_xyz.Y = v.t.z;
+		exportJoint.local_xyz.Z = v.t.y;
+		
 
 		VQuat3 q = VQuat3(v.r);
 		exportJoint.orient.X = 0;

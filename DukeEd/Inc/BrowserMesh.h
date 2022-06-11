@@ -734,6 +734,8 @@ class WBrowserMesh : public WBrowser
 				RefreshViewport();
 				SetCaption();
 				break;
+
+// jmarshall
 			case IDMM_EXPORT_MESH:
 				{
 					OPENFILENAMEA ofn;
@@ -788,6 +790,35 @@ class WBrowserMesh : public WBrowser
 				}
 				break;
 			}
+			case IDMM_EXPORT_SEQUENCES:
+			{
+				OPENFILENAMEA ofn;
+				char File[8192] = "\0";
+				FString Package = SequenceFrame->PackageCombo.GetString(SequenceFrame->PackageCombo.GetCurrent());
+
+				::sprintf(File, "%s.md5mesh", TCHAR_TO_ANSI(*Package));
+
+				ZeroMemory(&ofn, sizeof(OPENFILENAMEA));
+				ofn.lStructSize = sizeof(OPENFILENAMEA);
+				ofn.hwndOwner = hWnd;
+				ofn.lpstrFile = File;
+				ofn.nMaxFile = sizeof(char) * 8192;
+				ofn.lpstrFilter = "Sequences md5anim (*.md5anim)\0*.md5anim\0All Files\0*.*\0\0";
+				ofn.lpstrInitialDir = appToAnsi(*(GLastDir[eLASTDIR_DMX]));
+				ofn.lpstrDefExt = "md5anim";
+				ofn.lpstrTitle = "Export All Sequnces";
+				ofn.Flags = OFN_HIDEREADONLY | OFN_NOCHANGEDIR | OFN_OVERWRITEPROMPT;
+
+				if (GetSaveFileNameA(&ofn))
+				{
+					UDukeMesh* DukeMesh = (UDukeMesh*)MeshViewport->MiscRes;
+					UDukeMeshInstance* MeshInst = (UDukeMeshInstance*)DukeMesh->GetInstance(MeshViewport->Actor);
+					MeshInst->ExportSequences(File);
+				}
+				break;
+			}
+// jmarshall end
+
 			break;
 			case IDMN_MB_PROPS:
 				SequenceFrame->OnConfigClick();
