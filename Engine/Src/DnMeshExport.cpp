@@ -181,7 +181,7 @@ void UDukeMeshInstance::ExportEvents(const char* tempFileName, OCpjSequence* seq
 		return;
 
 	char eventFileName[512];
-	sprintf(eventFileName, "%s_%s.csv", tempFileName, sequence->GetName());
+	sprintf(eventFileName, "%s_%s.events", tempFileName, sequence->GetName());
 
 	FILE* f = fopen(eventFileName, "wb");
 	fprintf(f, "frame,eventName,paramString\n");
@@ -552,6 +552,30 @@ void UDukeMeshInstance::GatherExportJoints(TArray< FDukeExportJoint>& joints)
 	}
 }
 
+void UDukeMeshInstance::ExportMounts(const char* fileName)
+{
+	if (Mac->mSkeleton->m_Mounts.GetCount() == 0)
+		return;
+
+	char tempFileName[512];
+	StripExtension(fileName, tempFileName);
+
+	char eventFileName[512];
+	sprintf(eventFileName, "%s.mounts", tempFileName);
+
+	FILE* f = fopen(eventFileName, "wb");
+	fprintf(f, "mount_name,bound_name,x,y,z,yaw,pitch,roll\n");
+
+	for (int i = 0; i < Mac->mSkeleton->m_Mounts.GetCount(); i++)
+	{
+		VEulers3 euler(Mac->mSkeleton->m_Mounts[i].baseCoords.r);
+
+		fprintf(f, "%s,%s,%f,%f,%f,%f,%f,%f\n", Mac->mSkeleton->m_Mounts[i].name.Str(), Mac->mSkeleton->m_Mounts[i].bone->name.Str(), Mac->mSkeleton->m_Mounts[i].baseCoords.t.x, Mac->mSkeleton->m_Mounts[i].baseCoords.t.y, Mac->mSkeleton->m_Mounts[i].baseCoords.t.z, euler.y, euler.p, euler.r);
+	}
+
+	fclose(f);
+}
+
 void UDukeMeshInstance::ExportToMD5Mesh(const char* fileName)
 {
 	TArray< FDukeExportJoint> joints;
@@ -563,6 +587,8 @@ void UDukeMeshInstance::ExportToMD5Mesh(const char* fileName)
 	GatherExportJoints(joints);
 
 	GatherExportMeshes(fileName, joints, meshes);
+
+	ExportMounts(fileName);
 
 	FILE* f = fopen(fileName, "wb");
 

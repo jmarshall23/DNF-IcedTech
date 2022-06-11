@@ -117,6 +117,7 @@ class ENGINE_API UDukeMeshInstance : public UMeshInstance
 	FBox GetRenderBoundingBox(const AActor* Owner, UBOOL Exact);
 
 // jmarshall
+	void ExportMounts(const char* fileName);
 	void ExportEvents(const char* fileName, OCpjSequence* sequence);
 
 	void EvalBoneRelativeTransforms(OCpjSequence* sequence, CCpjSeqFrame* frm, VCoords3* frmDeltaCoords, NBool* bonesUsed);
