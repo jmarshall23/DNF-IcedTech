@@ -177,6 +177,9 @@ void UDukeMeshInstance::WriteAnimatedJointTransform(OCpjSequence* sequence, FILE
 
 void UDukeMeshInstance::ExportEvents(const char* tempFileName, OCpjSequence* sequence)
 {
+	if (sequence->m_Events.GetCount() == 0)
+		return;
+
 	char eventFileName[512];
 	sprintf(eventFileName, "%s_%s.csv", tempFileName, sequence->GetName());
 
