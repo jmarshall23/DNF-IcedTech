@@ -433,9 +433,9 @@ void UDukeMeshInstance::GatherExportMeshes(const char* fileName, const TArray< F
 			mesh->verts.AddItem(v);
 
 			FDukeExportTri tri;
-			tri.tris[0] = (mesh->tris.Num() * 3) + 0;
+			tri.tris[0] = (mesh->tris.Num() * 3) + 2;
 			tri.tris[1] = (mesh->tris.Num() * 3) + 1;
-			tri.tris[2] = (mesh->tris.Num() * 3) + 2;
+			tri.tris[2] = (mesh->tris.Num() * 3) + 0;
 			mesh->tris.AddItem(tri);
 		}
 	}
