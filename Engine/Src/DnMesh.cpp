@@ -605,6 +605,10 @@ void UDukeMeshInstance::GatherExportMeshes(const TArray< FDukeExportJoint>& join
 				w.y = vert->weights[d].offsetPos.y * joints(w.jointIndex).scale.Z;
 				w.z = vert->weights[d].offsetPos.z * joints(w.jointIndex).scale.Y;
 
+				float z = w.z;
+				w.z = w.y;
+				w.y = z;
+
 				mesh.weights.AddItem(w);
 				v.numWeights++;
 			}
@@ -652,8 +656,8 @@ void UDukeMeshInstance::GatherExportJoints(TArray< FDukeExportJoint>& joints)
 		VCoords3 v = bone->GetCoords(false);
 
 		exportJoint.xyz.X = v.t.x;
-		exportJoint.xyz.Y = v.t.y;
-		exportJoint.xyz.Z = v.t.z;
+		exportJoint.xyz.Y = v.t.z;
+		exportJoint.xyz.Z = v.t.y;
 
 		VQuat3 q = VQuat3(v.r);
 		exportJoint.orient.X = 0;
