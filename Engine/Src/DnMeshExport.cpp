@@ -175,6 +175,51 @@ void UDukeMeshInstance::WriteAnimatedJointTransform(OCpjSequence* sequence, FILE
 	fprintf(f,"\n");
 }
 
+void UDukeMeshInstance::ExportEvents(const char* tempFileName, OCpjSequence* sequence)
+{
+	char eventFileName[512];
+	sprintf(eventFileName, "%s_%s.csv", tempFileName, sequence->GetName());
+
+	FILE* f = fopen(eventFileName, "wb");
+	fprintf(f, "frame,eventName,paramString\n");
+
+	for (int i = 0; i < sequence->m_Events.GetCount(); i++)
+	{
+		CCpjSeqEvent* ev = &sequence->m_Events[i];
+
+		int frame = ev->time * sequence->m_Frames.GetCount();
+
+		fprintf(f, "%d,", frame);
+
+		switch (ev->eventType)
+		{
+			case SEQEV_INVALID:
+				fprintf(f, "SEQEV_INVALID,");
+				break;
+
+			case SEQEV_MARKER:
+				fprintf(f, "SEQEV_MARKER,");
+				break;
+			case SEQEV_TRIGGER:
+				fprintf(f, "SEQEV_TRIGGER,");
+				break;
+			case SEQEV_ACTORCMD:
+				fprintf(f, "SEQEV_ACTORCMD,");
+				break;
+			case SEQEV_TRIFLAGS:
+				fprintf(f, "SEQEV_TRIFLAGS,");
+				break;
+			default:
+				assert(!"Invalid SEQ flag!");
+		}
+
+		fprintf(f, "%s\n", ev->paramString.Str());
+	}
+
+
+	fclose(f);
+}
+
 void UDukeMeshInstance::ExportSequence(const char* tempFileName, TArray< FDukeExportJoint>& joints, OCpjSequence* sequence)
 {
 	char animFileName[512];
@@ -210,6 +255,8 @@ void UDukeMeshInstance::ExportSequence(const char* tempFileName, TArray< FDukeEx
 			}
 		}
 	}
+
+	ExportEvents(tempFileName, sequence);
 
 	sprintf(animFileName, "%s_%s.md5anim", tempFileName, sequence->GetName());
 

@@ -117,6 +117,8 @@ class ENGINE_API UDukeMeshInstance : public UMeshInstance
 	FBox GetRenderBoundingBox(const AActor* Owner, UBOOL Exact);
 
 // jmarshall
+	void ExportEvents(const char* fileName, OCpjSequence* sequence);
+
 	void EvalBoneRelativeTransforms(OCpjSequence* sequence, CCpjSeqFrame* frm, VCoords3* frmDeltaCoords, NBool* bonesUsed);
 
 	void WriteAnimatedJointTransform(OCpjSequence* sequence, FILE* f, FDukeExportJoint* joint, VCoords3& jointTransform);

@@ -19,9 +19,30 @@ class  FScale;
 class  FGlobalMath;
 class  FMatrix;
 
-// jmarshall 
-#define SMALL_NUMBER		(1.e-8f)
 
+// Fixed point conversion.
+__forceinline INT Fix  (INT A)		{ return A<<16; };
+__forceinline INT Fix  (FLOAT A)	{ return (INT)(A*65536.f); };
+//__forceinline INT Unfix(INT A)		{ return A>>16; };
+#define Unfix(A)	((A)>>16)
+
+// Constants.
+#undef  PI
+#define PI 					(3.1415926535897932)
+#define FLOAT_PI			(3.1415926535897932f)
+#define SMALL_NUMBER		(1.e-8)
+#define KINDA_SMALL_NUMBER	(1.e-4)
+
+// Aux constants.
+#define INV_PI			(0.31830988618)
+#define HALF_PI			(1.57079632679)
+
+// Magic numbers for numerical precision.
+#define DELTA			(0.00001f)
+#define SLERP_DELTA		(0.0001f)
+
+
+// jmarshall 
 namespace UnrealPlatformMathSSE
 {
 	static FORCEINLINE float InvSqrt(float F)
@@ -84,27 +105,6 @@ namespace UnrealPlatformMathSSE
 	}
 }
 // jmarshall end
-
-// Fixed point conversion.
-__forceinline INT Fix  (INT A)		{ return A<<16; };
-__forceinline INT Fix  (FLOAT A)	{ return (INT)(A*65536.f); };
-//__forceinline INT Unfix(INT A)		{ return A>>16; };
-#define Unfix(A)	((A)>>16)
-
-// Constants.
-#undef  PI
-#define PI 					(3.1415926535897932)
-#define FLOAT_PI			(3.1415926535897932f)
-#define SMALL_NUMBER		(1.e-8)
-#define KINDA_SMALL_NUMBER	(1.e-4)
-
-// Aux constants.
-#define INV_PI			(0.31830988618)
-#define HALF_PI			(1.57079632679)
-
-// Magic numbers for numerical precision.
-#define DELTA			(0.00001f)
-#define SLERP_DELTA		(0.0001f)
 
 /*-----------------------------------------------------------------------------
 	Global functions.
