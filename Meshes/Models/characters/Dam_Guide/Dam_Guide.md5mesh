@@ -53,7 +53,7 @@ joints {
 	"FOOT_R" 45 ( -4.061856 -28.052519 48.332489 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/Dam_Guide/Dam_Guide_0.tga"
+	shader "Dam_Guide_0.tga"
 	numverts 441
 
 	vert 0 ( 0.800781 0.960938 ) 0 1
@@ -1462,7 +1462,7 @@ mesh {
 	weight 515 30 0.900000 ( 1.543314 3.377098 -4.727572 )
 	weight 516 31 0.100000 ( 1.577884 -0.363602 1.046860 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/Dam_Guide/Dam_Guide_1.tga"
+	shader "Dam_Guide_1.tga"
 	numverts 1155
 
 	vert 0 ( 0.921875 0.601562 ) 0 1
@@ -5318,7 +5318,7 @@ mesh {
 	weight 1534 30 1.000000 ( 1.564953 4.990402 -5.800072 )
 	weight 1535 30 1.000000 ( 3.037443 4.891098 -4.648072 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/Dam_Guide/Dam_Guide_2.tga"
+	shader "Dam_Guide_2.tga"
 	numverts 699
 
 	vert 0 ( 0.792969 0.000000 ) 0 1
@@ -7587,7 +7587,7 @@ mesh {
 	weight 859 16 1.000000 ( -8.655157 -1.909560 -0.393798 )
 	weight 860 16 1.000000 ( -8.993558 -1.668462 2.133389 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/Dam_Guide/Dam_Guide_3.tga"
+	shader "Dam_Guide_3.tga"
 	numverts 462
 
 	vert 0 ( 0.988281 0.054688 ) 0 1

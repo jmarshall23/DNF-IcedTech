@@ -53,7 +53,7 @@ joints {
 	"FOOT_R" 45 ( -3.704284 -29.083578 50.295986 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_BellyA/NPC_M_BellyA_0.tga"
+	shader "NPC_M_BellyA_0.tga"
 	numverts 444
 
 	vert 0 ( 0.992188 0.097656 ) 0 1
@@ -1685,7 +1685,7 @@ mesh {
 	weight 732 2 1.000000 ( 1.995532 7.919403 -4.810489 )
 	weight 733 2 1.000000 ( 0.016655 7.665199 -5.289989 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_BellyA/NPC_M_BellyA_1.tga"
+	shader "NPC_M_BellyA_1.tga"
 	numverts 504
 
 	vert 0 ( 0.906250 0.671875 ) 0 1
@@ -3354,7 +3354,7 @@ mesh {
 	weight 649 30 0.900000 ( 2.355879 -0.963501 -3.898898 )
 	weight 650 34 0.100000 ( 2.380229 -0.933502 -1.068820 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_BellyA/NPC_M_BellyA_2.tga"
+	shader "NPC_M_BellyA_2.tga"
 	numverts 252
 
 	vert 0 ( 0.824219 0.515625 ) 0 1
@@ -4184,7 +4184,7 @@ mesh {
 	weight 314 43 1.000000 ( 0.476134 -4.581066 -9.793850 )
 	weight 315 43 1.000000 ( 3.135696 -3.121804 -7.185640 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_BellyA/NPC_M_BellyA_3.tga"
+	shader "NPC_M_BellyA_3.tga"
 	numverts 1104
 
 	vert 0 ( 0.753906 0.835938 ) 0 1
@@ -8236,7 +8236,7 @@ mesh {
 	weight 1832 42 1.000000 ( 1.960960 -10.568301 1.368579 )
 	weight 1833 42 1.000000 ( -0.212730 -10.527501 0.259902 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_BellyA/NPC_M_BellyA_4.tga"
+	shader "NPC_M_BellyA_4.tga"
 	numverts 222
 
 	vert 0 ( 0.003906 0.578125 ) 0 3

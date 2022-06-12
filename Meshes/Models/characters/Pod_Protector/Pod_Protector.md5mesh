@@ -20,7 +20,7 @@ joints {
 	"Skeleton10" 12 ( -0.034668 14.034336 5.931495 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/Pod_Protector/Pod_Protector_0.tga"
+	shader "Pod_Protector_0.tga"
 	numverts 150
 
 	vert 0 ( 0.398438 0.007812 ) 0 2
@@ -576,7 +576,7 @@ mesh {
 	weight 244 2 0.014918 ( -2.653484 -12.085105 -5.360583 )
 	weight 245 3 0.016874 ( -3.332166 12.211051 -4.632775 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/Pod_Protector/Pod_Protector_1.tga"
+	shader "Pod_Protector_1.tga"
 	numverts 372
 
 	vert 0 ( 0.097656 0.546875 ) 0 2
@@ -2475,7 +2475,7 @@ mesh {
 	weight 1143 4 0.575540 ( 3.354700 7.308296 -4.945130 )
 	weight 1144 12 0.424460 ( 0.085078 2.576856 3.354701 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/Pod_Protector/Pod_Protector_2.tga"
+	shader "Pod_Protector_2.tga"
 	numverts 36
 
 	vert 0 ( 0.484375 0.500000 ) 0 2

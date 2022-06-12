@@ -53,7 +53,7 @@ joints {
 	"FOOT_R" 45 ( -3.602514 -28.232889 49.054741 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_ThinA/NPC_M_ThinA_0.tga"
+	shader "NPC_M_ThinA_0.tga"
 	numverts 444
 
 	vert 0 ( 0.992188 0.097656 ) 0 2
@@ -1691,7 +1691,7 @@ mesh {
 	weight 738 2 1.000000 ( 1.979663 7.741199 -4.637865 )
 	weight 739 2 1.000000 ( 0.000787 7.487000 -5.117365 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_ThinA/NPC_M_ThinA_1.tga"
+	shader "NPC_M_ThinA_1.tga"
 	numverts 504
 
 	vert 0 ( 0.906250 0.671875 ) 0 1
@@ -3364,7 +3364,7 @@ mesh {
 	weight 653 30 0.900000 ( 1.987993 -1.184196 -4.125841 )
 	weight 654 34 0.100000 ( 2.011764 -1.324493 -1.565780 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_ThinA/NPC_M_ThinA_2.tga"
+	shader "NPC_M_ThinA_2.tga"
 	numverts 252
 
 	vert 0 ( 0.824219 0.515625 ) 0 1
@@ -4194,7 +4194,7 @@ mesh {
 	weight 314 43 1.000000 ( 0.555745 -4.427516 -9.557770 )
 	weight 315 43 1.000000 ( 3.215307 -2.968255 -6.949570 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_ThinA/NPC_M_ThinA_3.tga"
+	shader "NPC_M_ThinA_3.tga"
 	numverts 1104
 
 	vert 0 ( 0.753906 0.835938 ) 0 1
@@ -8251,7 +8251,7 @@ mesh {
 	weight 1837 42 1.000000 ( 1.835890 -9.964301 1.523428 )
 	weight 1838 42 1.000000 ( -0.140200 -9.923501 0.467545 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_ThinA/NPC_M_ThinA_4.tga"
+	shader "NPC_M_ThinA_4.tga"
 	numverts 222
 
 	vert 0 ( 0.003906 0.578125 ) 0 3

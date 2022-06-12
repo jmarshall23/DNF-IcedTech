@@ -53,7 +53,7 @@ joints {
 	"FOOT_R" 45 ( -3.282053 -28.252594 49.054749 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_OldA/NPC_M_OldA_0.tga"
+	shader "NPC_M_OldA_0.tga"
 	numverts 444
 
 	vert 0 ( 0.992188 0.097656 ) 0 1
@@ -1685,7 +1685,7 @@ mesh {
 	weight 732 2 1.000000 ( 1.979663 7.741319 -4.637842 )
 	weight 733 2 1.000000 ( 0.000786 7.487145 -5.117336 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_OldA/NPC_M_OldA_1.tga"
+	shader "NPC_M_OldA_1.tga"
 	numverts 504
 
 	vert 0 ( 0.906250 0.671875 ) 0 1
@@ -3354,7 +3354,7 @@ mesh {
 	weight 649 30 0.900000 ( 2.160463 -1.246859 -4.207883 )
 	weight 650 34 0.100000 ( 2.184234 -1.222564 -1.473912 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_OldA/NPC_M_OldA_2.tga"
+	shader "NPC_M_OldA_2.tga"
 	numverts 252
 
 	vert 0 ( 0.824219 0.515625 ) 0 1
@@ -4184,7 +4184,7 @@ mesh {
 	weight 314 43 1.000000 ( 0.555746 -4.427516 -9.557794 )
 	weight 315 43 1.000000 ( 3.215307 -2.968256 -6.949558 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_OldA/NPC_M_OldA_3.tga"
+	shader "NPC_M_OldA_3.tga"
 	numverts 1104
 
 	vert 0 ( 0.753906 0.835938 ) 0 1
@@ -8241,7 +8241,7 @@ mesh {
 	weight 1837 42 1.000000 ( 1.810160 -8.637578 0.945111 )
 	weight 1838 42 1.000000 ( -0.215080 -8.596081 -0.062565 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_M_OldA/NPC_M_OldA_4.tga"
+	shader "NPC_M_OldA_4.tga"
 	numverts 222
 
 	vert 0 ( 0.003906 0.578125 ) 0 3

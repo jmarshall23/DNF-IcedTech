@@ -621,7 +621,7 @@ void UDukeMeshInstance::ExportToMD5Mesh(const char* fileName)
 	for (int i = 0; i < meshes.Num(); i++)
 	{
 		fprintf(f, "mesh {\n");
-		fprintf(f, "\tshader \"%s.tga\"\n", meshes(i).textureName);
+		fprintf(f, "\tshader \"%s.tga\"\n", SkipPath(meshes(i).textureName));
 		fprintf(f, "\tnumverts %d\n\n", meshes(i).verts.Num());
 		for (int d = 0; d < meshes(i).verts.Num(); d++)
 		{

@@ -53,7 +53,7 @@ joints {
 	"THUMBTIP_R" 44 ( -34.377750 14.496826 -1.302658 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/EDF1desert/EDF1desert_0.tga"
+	shader "EDF1desert_0.tga"
 	numverts 348
 
 	vert 0 ( 0.398438 0.820312 ) 0 2
@@ -1159,7 +1159,7 @@ mesh {
 	weight 398 19 1.000000 ( 1.456018 3.351906 -4.791247 )
 	weight 399 19 1.000000 ( 1.454268 2.833405 -4.824597 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF1desert/EDF1desert_1.tga"
+	shader "EDF1desert_1.tga"
 	numverts 369
 
 	vert 0 ( 0.687500 0.003906 ) 0 1
@@ -2377,7 +2377,7 @@ mesh {
 	weight 468 2 0.522122 ( 0.549271 1.117307 -1.506527 )
 	weight 469 4 0.477878 ( -7.155369 8.215500 -1.417717 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF1desert/EDF1desert_2.tga"
+	shader "EDF1desert_2.tga"
 	numverts 741
 
 	vert 0 ( 0.011719 0.421875 ) 0 2
@@ -4710,7 +4710,7 @@ mesh {
 	weight 839 42 1.000000 ( 0.465725 -6.720799 5.983831 )
 	weight 840 42 1.000000 ( 0.919319 -2.041798 4.756461 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF1desert/EDF1desert_3.tga"
+	shader "EDF1desert_3.tga"
 	numverts 1236
 
 	vert 0 ( 0.992188 0.050781 ) 0 1

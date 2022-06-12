@@ -11,7 +11,7 @@ joints {
 	"HairR2" 3 ( 1.538425 -8.653097 4.227328 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/hair_pigtail/hair_pigtail_0.tga"
+	shader "hair_pigtail_0.tga"
 	numverts 582
 
 	vert 0 ( 0.488281 0.566406 ) 0 1

@@ -49,7 +49,7 @@ joints {
 	"FOOT_R" 41 ( -4.180457 -29.218666 49.645699 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_freezer/EDF_freezer_0.tga"
+	shader "EDF_freezer_0.tga"
 	numverts 900
 
 	vert 0 ( 0.816406 0.679688 ) 0 3
@@ -3396,7 +3396,7 @@ mesh {
 	weight 1535 28 1.000000 ( -1.435799 0.034490 -0.682510 )
 	weight 1536 28 1.000000 ( -1.744096 -0.416409 -1.693860 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_freezer/EDF_freezer_1.tga"
+	shader "EDF_freezer_1.tga"
 	numverts 402
 
 	vert 0 ( 0.750000 0.585938 ) 0 2
@@ -4739,7 +4739,7 @@ mesh {
 	weight 527 2 1.000000 ( 0.114851 16.806402 14.763537 )
 	weight 528 2 1.000000 ( -5.120415 15.603201 14.763537 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_freezer/EDF_freezer_2.tga"
+	shader "EDF_freezer_2.tga"
 	numverts 798
 
 	vert 0 ( 0.421875 0.292969 ) 0 2
@@ -7568,7 +7568,7 @@ mesh {
 	weight 1221 17 1.000000 ( -3.184926 3.640976 -1.109914 )
 	weight 1222 17 1.000000 ( -3.118016 2.271279 3.211440 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_freezer/EDF_freezer_3.tga"
+	shader "EDF_freezer_3.tga"
 	numverts 456
 
 	vert 0 ( 0.605469 0.816406 ) 0 1

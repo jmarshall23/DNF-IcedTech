@@ -14,7 +14,7 @@ joints {
 	"Barrel_R" 6 ( -14.440194 152.956711 -1.134179 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedNS/Turret_MannedNS_0.tga"
+	shader "Turret_MannedNS_0.tga"
 	numverts 393
 
 	vert 0 ( -0.187500 0.250000 ) 0 1
@@ -1203,7 +1203,7 @@ mesh {
 	weight 391 4 1.000000 ( 4.755073 8.720358 -4.451471 )
 	weight 392 4 1.000000 ( 1.026875 8.720390 5.638598 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedNS/Turret_MannedNS_1.tga"
+	shader "Turret_MannedNS_1.tga"
 	numverts 390
 
 	vert 0 ( 0.433594 0.695312 ) 0 1
@@ -2383,7 +2383,7 @@ mesh {
 	weight 388 6 1.000000 ( 0.035900 -0.126800 5.761520 )
 	weight 389 6 1.000000 ( 4.755074 8.720359 4.567869 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedNS/Turret_MannedNS_2.tga"
+	shader "Turret_MannedNS_2.tga"
 	numverts 168
 
 	vert 0 ( 0.492188 0.250000 ) 0 1
@@ -2897,7 +2897,7 @@ mesh {
 	weight 166 7 1.000000 ( -0.408008 23.041012 -1.847003 )
 	weight 167 7 1.000000 ( 1.170492 23.040998 0.886998 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedNS/Turret_MannedNS_3.tga"
+	shader "Turret_MannedNS_3.tga"
 	numverts 318
 
 	vert 0 ( 0.847656 0.718750 ) 0 1
@@ -3861,7 +3861,7 @@ mesh {
 	weight 316 7 1.000000 ( 1.170403 0.037992 -0.935700 )
 	weight 317 7 1.000000 ( -0.407997 0.038005 -1.847000 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedNS/Turret_MannedNS_4.tga"
+	shader "Turret_MannedNS_4.tga"
 	numverts 48
 
 	vert 0 ( 8.500000 0.000000 ) 0 1
@@ -4015,7 +4015,7 @@ mesh {
 	weight 46 3 1.000000 ( -9.426808 32.825169 -7.609344 )
 	weight 47 3 1.000000 ( -8.879988 31.908772 -7.623221 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedNS/Turret_MannedNS_5.tga"
+	shader "Turret_MannedNS_5.tga"
 	numverts 6
 
 	vert 0 ( 0.000000 0.000000 ) 0 1
@@ -4043,7 +4043,7 @@ mesh {
 	weight 4 3 1.000000 ( 7.698232 16.081575 -11.824152 )
 	weight 5 3 1.000000 ( -4.942677 9.962280 -11.916820 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedNS/Turret_MannedNS_6.tga"
+	shader "Turret_MannedNS_6.tga"
 	numverts 12
 
 	vert 0 ( 0.000000 0.000000 ) 0 1

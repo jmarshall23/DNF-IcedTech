@@ -8,7 +8,7 @@ joints {
 	"ROOT" -1 ( -0.000502 -4.315060 0.215125 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/weapons/w_snipergun/w_snipergun_0.tga"
+	shader "w_snipergun_0.tga"
 	numverts 402
 
 	vert 0 ( 0.347656 0.125000 ) 0 1
@@ -1224,7 +1224,7 @@ mesh {
 	weight 400 1 1.000000 ( 71.184265 0.667103 2.308386 )
 	weight 401 1 1.000000 ( 71.184265 -0.625173 2.308386 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/w_snipergun/w_snipergun_1.tga"
+	shader "w_snipergun_1.tga"
 	numverts 54
 
 	vert 0 ( 0.984375 0.468750 ) 0 1
@@ -1396,7 +1396,7 @@ mesh {
 	weight 52 1 1.000000 ( 37.479259 -1.154953 2.323556 )
 	weight 53 1 1.000000 ( 37.479259 1.217087 2.323556 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/w_snipergun/w_snipergun_2.tga"
+	shader "w_snipergun_2.tga"
 	numverts 36
 
 	vert 0 ( 0.492188 0.015625 ) 0 1

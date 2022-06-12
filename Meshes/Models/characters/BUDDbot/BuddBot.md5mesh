@@ -11,7 +11,7 @@ joints {
 	"jaw" 3 ( 4.193316 10.127138 22.599779 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/BuddBot/BuddBot_0.tga"
+	shader "BuddBot_0.tga"
 	numverts 588
 
 	vert 0 ( 0.988281 0.207031 ) 0 1
@@ -1785,7 +1785,7 @@ mesh {
 	weight 586 3 1.000000 ( 3.224031 18.406998 -1.479132 )
 	weight 587 3 1.000000 ( 4.069231 18.406998 -1.479132 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/BuddBot/BuddBot_1.tga"
+	shader "BuddBot_1.tga"
 	numverts 738
 
 	vert 0 ( 0.597656 0.335938 ) 0 1
@@ -4009,7 +4009,7 @@ mesh {
 	weight 736 3 1.000000 ( -3.471149 6.351601 -11.044422 )
 	weight 737 3 1.000000 ( 3.470581 6.351600 -11.044423 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/BuddBot/BuddBot_2.tga"
+	shader "BuddBot_2.tga"
 	numverts 36
 
 	vert 0 ( 0.828125 1.171875 ) 0 1
@@ -4127,7 +4127,7 @@ mesh {
 	weight 34 0 1.000000 ( 8.603894 -9.110140 -20.288080 )
 	weight 35 0 1.000000 ( 12.313973 -14.397640 -14.167850 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/BuddBot/BuddBot_3.tga"
+	shader "BuddBot_3.tga"
 	numverts 12
 
 	vert 0 ( 0.734375 0.000000 ) 0 1

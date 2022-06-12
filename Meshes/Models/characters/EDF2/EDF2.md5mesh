@@ -53,7 +53,7 @@ joints {
 	"FOOT_R" 45 ( -4.180457 -29.073870 49.619801 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/EDF2/EDF2_0.tga"
+	shader "EDF2_0.tga"
 	numverts 348
 
 	vert 0 ( 0.398438 0.820312 ) 0 2
@@ -1165,7 +1165,7 @@ mesh {
 	weight 404 45 1.000000 ( 1.808331 -11.421200 6.335860 )
 	weight 405 45 1.000000 ( 1.660512 -10.272700 8.299840 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF2/EDF2_1.tga"
+	shader "EDF2_1.tga"
 	numverts 423
 
 	vert 0 ( 0.679688 0.160156 ) 0 1
@@ -2663,7 +2663,7 @@ mesh {
 	weight 640 16 0.200000 ( 0.259425 1.374750 -0.366884 )
 	weight 641 2 1.000000 ( -8.189256 7.278004 -3.611950 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF2/EDF2_2.tga"
+	shader "EDF2_2.tga"
 	numverts 588
 
 	vert 0 ( 0.000000 0.929688 ) 0 1
@@ -4689,7 +4689,7 @@ mesh {
 	weight 838 40 0.499525 ( -4.297538 -9.485699 4.288201 )
 	weight 839 44 0.500475 ( 0.562468 -1.954499 4.766134 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF2/EDF2_3.tga"
+	shader "EDF2_3.tga"
 	numverts 1200
 
 	vert 0 ( 0.996094 0.312500 ) 0 1

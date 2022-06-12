@@ -59,7 +59,7 @@ joints {
 	"FOOT_R" 51 ( -2.030567 -28.281963 49.819496 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/Stripper_Jenny/Stripper_Jenny_0.tga"
+	shader "Stripper_Jenny_0.tga"
 	numverts 510
 
 	vert 0 ( 0.343750 0.050781 ) 0 3
@@ -2353,7 +2353,7 @@ mesh {
 	weight 1262 2 0.706706 ( -3.818639 8.856499 -1.124000 )
 	weight 1263 16 0.250000 ( 2.446874 1.882495 -2.957468 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/Stripper_Jenny/Stripper_Jenny_1.tga"
+	shader "Stripper_Jenny_1.tga"
 	numverts 984
 
 	vert 0 ( 0.785156 0.117188 ) 0 2
@@ -6345,7 +6345,7 @@ mesh {
 	weight 2012 2 0.336220 ( -6.681799 8.795300 3.450230 )
 	weight 2013 16 0.634283 ( -0.416277 1.821303 1.616767 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/Stripper_Jenny/Stripper_Jenny_2.tga"
+	shader "Stripper_Jenny_2.tga"
 	numverts 504
 
 	vert 0 ( 0.074219 0.199219 ) 0 3
@@ -8245,7 +8245,7 @@ mesh {
 	weight 880 50 1.000000 ( 1.241838 -14.958601 -3.621892 )
 	weight 881 50 1.000000 ( 3.409959 -8.988603 -4.940803 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/Stripper_Jenny/Stripper_Jenny_3.tga"
+	shader "Stripper_Jenny_3.tga"
 	numverts 597
 
 	vert 0 ( 0.136719 0.949219 ) 0 1
@@ -10179,7 +10179,7 @@ mesh {
 	weight 728 52 1.000000 ( -0.755583 -7.167244 0.835290 )
 	weight 729 52 1.000000 ( 0.387337 -7.216309 0.804489 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/Stripper_Jenny/Stripper_Jenny_4.tga"
+	shader "Stripper_Jenny_4.tga"
 	numverts 621
 
 	vert 0 ( 0.343750 0.742188 ) 0 2

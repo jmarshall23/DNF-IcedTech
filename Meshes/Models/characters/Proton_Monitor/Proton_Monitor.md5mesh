@@ -22,7 +22,7 @@ joints {
 	"ThrustRR" 0 ( -13.337800 -11.252699 16.933002 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/Proton_Monitor/Proton_Monitor_0.tga"
+	shader "Proton_Monitor_0.tga"
 	numverts 1800
 
 	vert 0 ( 0.671875 0.929688 ) 0 1

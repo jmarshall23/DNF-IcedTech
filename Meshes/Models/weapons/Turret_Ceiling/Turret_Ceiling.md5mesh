@@ -12,7 +12,7 @@ joints {
 	"BeltB" 4 ( 11.416216 59.467052 45.311630 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Ceiling/Turret_Ceiling_0.tga"
+	shader "Turret_Ceiling_0.tga"
 	numverts 6
 
 	vert 0 ( 0.968750 0.265625 ) 0 1
@@ -40,7 +40,7 @@ mesh {
 	weight 4 0 1.000000 ( 14.565670 2.543605 19.098198 )
 	weight 5 0 1.000000 ( 14.502446 -7.856705 -8.622702 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Ceiling/Turret_Ceiling_1.tga"
+	shader "Turret_Ceiling_1.tga"
 	numverts 12
 
 	vert 0 ( 0.992188 0.992188 ) 0 1
@@ -86,7 +86,7 @@ mesh {
 	weight 10 0 1.000000 ( 15.047719 81.841881 8.622700 )
 	weight 11 0 1.000000 ( 14.984496 71.441467 19.098200 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Ceiling/Turret_Ceiling_2.tga"
+	shader "Turret_Ceiling_2.tga"
 	numverts 462
 
 	vert 0 ( 0.312500 0.417969 ) 0 1
@@ -1554,7 +1554,7 @@ mesh {
 	weight 532 5 0.809524 ( -6.078262 -0.693695 -1.105631 )
 	weight 533 5 1.000000 ( -0.559520 -2.215555 -1.105631 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Ceiling/Turret_Ceiling_3.tga"
+	shader "Turret_Ceiling_3.tga"
 	numverts 36
 
 	vert 0 ( 2.343750 0.171875 ) 0 1
@@ -1672,7 +1672,7 @@ mesh {
 	weight 34 2 1.000000 ( 11.997101 -0.065300 0.005400 )
 	weight 35 2 1.000000 ( 5.954711 -0.065299 -10.460400 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Ceiling/Turret_Ceiling_4.tga"
+	shader "Turret_Ceiling_4.tga"
 	numverts 48
 
 	vert 0 ( 2.281250 0.601562 ) 0 1

@@ -41,7 +41,7 @@ joints {
 	"FOOT_R" 33 ( -4.171860 -27.577633 49.231598 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sapper/EDF_sapper_0.tga"
+	shader "EDF_sapper_0.tga"
 	numverts 582
 
 	vert 0 ( 0.234375 0.957031 ) 0 1
@@ -1928,7 +1928,7 @@ mesh {
 	weight 711 15 1.000000 ( -2.141003 1.578300 0.893790 )
 	weight 712 15 1.000000 ( -0.251602 0.299698 -0.467440 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sapper/EDF_sapper_1.tga"
+	shader "EDF_sapper_1.tga"
 	numverts 636
 
 	vert 0 ( 0.003906 0.324219 ) 0 1
@@ -4038,7 +4038,7 @@ mesh {
 	weight 826 13 0.557804 ( -11.731679 0.182400 1.609800 )
 	weight 827 14 0.442196 ( -0.679600 1.760700 1.730500 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sapper/EDF_sapper_2.tga"
+	shader "EDF_sapper_2.tga"
 	numverts 306
 
 	vert 0 ( 0.468750 0.917969 ) 0 1
@@ -5067,7 +5067,7 @@ mesh {
 	weight 405 15 1.000000 ( -2.328903 -1.565502 0.005050 )
 	weight 406 15 1.000000 ( -4.605400 -1.232403 0.011910 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sapper/EDF_sapper_3.tga"
+	shader "EDF_sapper_3.tga"
 	numverts 552
 
 	vert 0 ( 0.671875 0.902344 ) 0 1
@@ -6840,7 +6840,7 @@ mesh {
 	weight 657 2 0.040000 ( 10.387925 8.361198 -2.143182 )
 	weight 658 3 0.960000 ( 1.401370 0.180901 -2.800832 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sapper/EDF_sapper_4.tga"
+	shader "EDF_sapper_4.tga"
 	numverts 597
 
 	vert 0 ( 0.859375 0.003906 ) 0 2

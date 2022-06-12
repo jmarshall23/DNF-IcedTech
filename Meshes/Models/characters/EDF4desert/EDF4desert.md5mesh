@@ -53,7 +53,7 @@ joints {
 	"FOOT_R" 45 ( -4.180457 -29.073870 49.619801 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/EDF4desert/EDF4desert_0.tga"
+	shader "EDF4desert_0.tga"
 	numverts 522
 
 	vert 0 ( 0.710938 0.097656 ) 0 2
@@ -1862,7 +1862,7 @@ mesh {
 	weight 753 30 1.000000 ( -3.201598 3.320999 -3.210004 )
 	weight 754 30 1.000000 ( -4.038008 3.017700 -2.194154 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF4desert/EDF4desert_1.tga"
+	shader "EDF4desert_1.tga"
 	numverts 294
 
 	vert 0 ( 0.296875 0.832031 ) 0 1
@@ -2797,7 +2797,7 @@ mesh {
 	weight 335 31 0.200000 ( 1.411560 -0.137199 1.264310 )
 	weight 336 30 1.000000 ( 1.374172 2.929695 -4.841224 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF4desert/EDF4desert_2.tga"
+	shader "EDF4desert_2.tga"
 	numverts 588
 
 	vert 0 ( 0.011719 0.421875 ) 0 2
@@ -4795,7 +4795,7 @@ mesh {
 	weight 810 40 0.506079 ( -4.068848 -9.485699 4.288201 )
 	weight 811 44 0.493921 ( 0.791159 -1.954499 4.766134 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF4desert/EDF4desert_3.tga"
+	shader "EDF4desert_3.tga"
 	numverts 1218
 
 	vert 0 ( 0.992188 0.050781 ) 0 1

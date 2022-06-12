@@ -41,7 +41,7 @@ joints {
 	"NOSE" 23 ( -0.000002 31.277050 -29.670195 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/alien_Adultsnatcher/alien_Adultsnatcher_0.tga"
+	shader "alien_Adultsnatcher_0.tga"
 	numverts 411
 
 	vert 0 ( 0.757812 0.230469 ) 0 2
@@ -1523,7 +1523,7 @@ mesh {
 	weight 648 16 0.799995 ( 10.620005 -3.973400 -4.848800 )
 	weight 649 17 0.200005 ( -2.120600 -2.974800 3.700455 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/alien_Adultsnatcher/alien_Adultsnatcher_1.tga"
+	shader "alien_Adultsnatcher_1.tga"
 	numverts 432
 
 	vert 0 ( 0.410156 0.941406 ) 0 1
@@ -2915,7 +2915,7 @@ mesh {
 	weight 516 23 0.239557 ( 0.979300 -12.917498 -14.660702 )
 	weight 517 34 0.760443 ( 0.913088 -2.949301 1.354797 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/alien_Adultsnatcher/alien_Adultsnatcher_2.tga"
+	shader "alien_Adultsnatcher_2.tga"
 	numverts 894
 
 	vert 0 ( 0.003906 0.601562 ) 0 1
@@ -6356,7 +6356,7 @@ mesh {
 	weight 1641 26 0.412370 ( 0.783771 0.417500 0.515600 )
 	weight 1642 27 0.023063 ( -5.620120 1.451698 -16.581120 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/alien_Adultsnatcher/alien_Adultsnatcher_3.tga"
+	shader "alien_Adultsnatcher_3.tga"
 	numverts 462
 
 	vert 0 ( 0.386719 0.750000 ) 0 2
@@ -7888,7 +7888,7 @@ mesh {
 	weight 596 17 1.000000 ( 7.236800 20.348499 0.190278 )
 	weight 597 17 1.000000 ( 2.577701 2.561001 7.214005 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/alien_Adultsnatcher/alien_Adultsnatcher_4.tga"
+	shader "alien_Adultsnatcher_4.tga"
 	numverts 360
 
 	vert 0 ( 0.519531 0.542969 ) 0 1

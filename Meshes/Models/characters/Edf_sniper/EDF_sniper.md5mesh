@@ -53,7 +53,7 @@ joints {
 	"FOOT_R" 45 ( -4.098360 -26.928341 48.869125 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sniper/EDF_sniper_0.tga"
+	shader "EDF_sniper_0.tga"
 	numverts 594
 
 	vert 0 ( 0.179688 0.296875 ) 0 2
@@ -2013,7 +2013,7 @@ mesh {
 	weight 760 35 1.000000 ( 0.443411 0.524399 0.238510 )
 	weight 761 35 1.000000 ( -0.365353 0.525505 0.238040 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sniper/EDF_sniper_1.tga"
+	shader "EDF_sniper_1.tga"
 	numverts 816
 
 	vert 0 ( 0.339844 0.425781 ) 0 1
@@ -4855,7 +4855,7 @@ mesh {
 	weight 1198 29 0.130435 ( 0.538565 3.800201 3.406680 )
 	weight 1199 30 0.695652 ( 0.491629 2.103600 4.457088 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sniper/EDF_sniper_2.tga"
+	shader "EDF_sniper_2.tga"
 	numverts 699
 
 	vert 0 ( 0.433594 0.074219 ) 0 1
@@ -7425,7 +7425,7 @@ mesh {
 	weight 1160 28 1.000000 ( -1.115546 -0.354948 -0.004540 )
 	weight 1161 28 1.000000 ( -0.824725 0.308615 -0.080970 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sniper/EDF_sniper_3.tga"
+	shader "EDF_sniper_3.tga"
 	numverts 585
 
 	vert 0 ( 0.289062 0.757812 ) 0 2

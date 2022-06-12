@@ -24,7 +24,7 @@ joints {
 	"UPTORSO" 1 ( 1.619627 7.576662 -0.327517 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/jetskidude/jetskidude_0.tga"
+	shader "jetskidude_0.tga"
 	numverts 744
 
 	vert 0 ( 0.738281 0.316406 ) 0 1

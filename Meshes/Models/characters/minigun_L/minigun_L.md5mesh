@@ -8,7 +8,7 @@ joints {
 	"ROTATE" 0 ( 0.076430 -2.660512 -7.310240 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/minigun_L/minigun_L_0.tga"
+	shader "minigun_L_0.tga"
 	numverts 162
 
 	vert 0 ( 0.527344 0.011719 ) 0 1
@@ -504,7 +504,7 @@ mesh {
 	weight 160 0 1.000000 ( 1.980049 0.109648 -4.672370 )
 	weight 161 0 1.000000 ( 1.413949 0.482238 -4.672370 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/minigun_L/minigun_L_1.tga"
+	shader "minigun_L_1.tga"
 	numverts 6
 
 	vert 0 ( 0.988281 0.003906 ) 0 1
@@ -532,7 +532,7 @@ mesh {
 	weight 4 0 1.000000 ( 2.134129 1.787638 1.532260 )
 	weight 5 0 1.000000 ( -2.033891 1.787638 1.532260 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/minigun_L/minigun_L_2.tga"
+	shader "minigun_L_2.tga"
 	numverts 12
 
 	vert 0 ( 0.167969 0.710938 ) 0 1
@@ -578,7 +578,7 @@ mesh {
 	weight 10 0 1.000000 ( -4.117900 5.397258 -5.381960 )
 	weight 11 0 1.000000 ( 2.134129 1.787638 -5.381960 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/minigun_L/minigun_L_3.tga"
+	shader "minigun_L_3.tga"
 	numverts 30
 
 	vert 0 ( 0.257812 0.324219 ) 0 1
@@ -678,7 +678,7 @@ mesh {
 	weight 28 0 1.000000 ( 1.750729 7.556908 -0.618270 )
 	weight 29 0 1.000000 ( 1.750729 7.556908 5.571750 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/minigun_L/minigun_L_4.tga"
+	shader "minigun_L_4.tga"
 	numverts 144
 
 	vert 0 ( 0.992188 0.007812 ) 0 1

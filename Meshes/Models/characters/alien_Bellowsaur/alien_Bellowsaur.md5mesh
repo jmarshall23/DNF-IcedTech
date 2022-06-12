@@ -34,7 +34,7 @@ joints {
 	"TONGUE4" 26 ( -0.000002 19.263741 -21.783661 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/alien_Bellowsaur/alien_Bellowsaur_0.tga"
+	shader "alien_Bellowsaur_0.tga"
 	numverts 486
 
 	vert 0 ( 0.941406 0.371094 ) 0 1
@@ -1838,7 +1838,7 @@ mesh {
 	weight 820 1 0.460101 ( 19.627501 -25.406998 -1.762890 )
 	weight 821 13 0.539899 ( 0.013000 1.253601 -9.115034 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/alien_Bellowsaur/alien_Bellowsaur_1.tga"
+	shader "alien_Bellowsaur_1.tga"
 	numverts 537
 
 	vert 0 ( 0.363281 0.195312 ) 0 2
@@ -3580,7 +3580,7 @@ mesh {
 	weight 656 1 0.849997 ( 19.171700 -18.060200 1.364010 )
 	weight 657 13 0.150003 ( -0.442801 8.600399 -5.988134 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/alien_Bellowsaur/alien_Bellowsaur_2.tga"
+	shader "alien_Bellowsaur_2.tga"
 	numverts 150
 
 	vert 0 ( 0.628906 0.378906 ) 0 3
@@ -4170,7 +4170,7 @@ mesh {
 	weight 278 1 0.649998 ( 17.377501 -21.871197 21.067770 )
 	weight 279 13 0.350002 ( -2.237000 4.789402 13.715626 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/alien_Bellowsaur/alien_Bellowsaur_3.tga"
+	shader "alien_Bellowsaur_3.tga"
 	numverts 252
 
 	vert 0 ( 0.019531 0.183594 ) 0 2
@@ -5116,7 +5116,7 @@ mesh {
 	weight 430 4 0.781576 ( -7.234625 -12.502003 28.403000 )
 	weight 431 9 0.218424 ( -0.701550 -10.212200 3.227299 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/alien_Bellowsaur/alien_Bellowsaur_4.tga"
+	shader "alien_Bellowsaur_4.tga"
 	numverts 180
 
 	vert 0 ( 0.746094 0.210938 ) 0 2
@@ -5824,7 +5824,7 @@ mesh {
 	weight 336 4 0.720106 ( 14.026906 -6.416103 25.925102 )
 	weight 337 5 0.279894 ( 6.920390 -4.126301 1.181004 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/alien_Bellowsaur/alien_Bellowsaur_5.tga"
+	shader "alien_Bellowsaur_5.tga"
 	numverts 687
 
 	vert 0 ( 0.691406 0.109375 ) 0 1

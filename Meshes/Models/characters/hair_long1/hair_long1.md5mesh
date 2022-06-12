@@ -21,7 +21,7 @@ joints {
 	"HairR2" 13 ( 0.353212 -6.290775 1.382560 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/hair_long1/hair_long1_0.tga"
+	shader "hair_long1_0.tga"
 	numverts 390
 
 	vert 0 ( 0.546875 0.523438 ) 0 1

@@ -53,7 +53,7 @@ joints {
 	"FOOT_R" 45 ( -3.602514 -28.232889 49.054741 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_Mechanic1/NPC_Mechanic1_0.tga"
+	shader "NPC_Mechanic1_0.tga"
 	numverts 441
 
 	vert 0 ( 0.992188 0.097656 ) 0 1
@@ -1703,7 +1703,7 @@ mesh {
 	weight 756 2 1.000000 ( 1.979663 7.701897 -4.493055 )
 	weight 757 2 1.000000 ( 0.000787 7.487198 -5.077495 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_Mechanic1/NPC_Mechanic1_1.tga"
+	shader "NPC_Mechanic1_1.tga"
 	numverts 1059
 
 	vert 0 ( 0.996094 0.664062 ) 0 1
@@ -5579,7 +5579,7 @@ mesh {
 	weight 1746 43 1.000000 ( 0.555745 -4.427516 -9.557770 )
 	weight 1747 43 1.000000 ( 3.215307 -2.968255 -6.949570 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_Mechanic1/NPC_Mechanic1_2.tga"
+	shader "NPC_Mechanic1_2.tga"
 	numverts 504
 
 	vert 0 ( 0.906250 0.671875 ) 0 1
@@ -7237,7 +7237,7 @@ mesh {
 	weight 638 30 0.200000 ( 2.160463 -1.123398 -4.126131 )
 	weight 639 34 0.800000 ( 2.184234 -1.263695 -1.566070 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_Mechanic1/NPC_Mechanic1_3.tga"
+	shader "NPC_Mechanic1_3.tga"
 	numverts 492
 
 	vert 0 ( 0.003906 0.203125 ) 0 1

@@ -14,7 +14,7 @@ joints {
 	"Barrel_R" 6 ( -14.440135 152.957733 -1.134191 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Manned/Turret_Manned_0.tga"
+	shader "Turret_Manned_0.tga"
 	numverts 450
 
 	vert 0 ( -0.187500 0.250000 ) 0 1
@@ -1382,7 +1382,7 @@ mesh {
 	weight 456 4 1.000000 ( 4.755100 8.720299 -4.451470 )
 	weight 457 4 1.000000 ( 1.026901 8.720299 5.638599 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Manned/Turret_Manned_1.tga"
+	shader "Turret_Manned_1.tga"
 	numverts 174
 
 	vert 0 ( 0.492188 0.250000 ) 0 1
@@ -1974,7 +1974,7 @@ mesh {
 	weight 232 7 1.000000 ( -0.408001 23.040009 -1.846900 )
 	weight 233 7 1.000000 ( 1.170403 23.040009 0.887000 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Manned/Turret_Manned_2.tga"
+	shader "Turret_Manned_2.tga"
 	numverts 459
 
 	vert 0 ( 0.855469 0.031250 ) 0 1
@@ -3651,7 +3651,7 @@ mesh {
 	weight 747 6 1.000000 ( 0.035900 -0.126701 5.761520 )
 	weight 748 6 1.000000 ( 4.755100 8.720398 4.567870 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Manned/Turret_Manned_3.tga"
+	shader "Turret_Manned_3.tga"
 	numverts 330
 
 	vert 0 ( 0.902344 0.718750 ) 0 2
@@ -4681,7 +4681,7 @@ mesh {
 	weight 358 7 1.000000 ( 1.170403 0.037003 -0.935599 )
 	weight 359 7 1.000000 ( -0.408001 0.037003 -1.846900 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Manned/Turret_Manned_4.tga"
+	shader "Turret_Manned_4.tga"
 	numverts 48
 
 	vert 0 ( 8.500000 0.000000 ) 0 1
@@ -4835,7 +4835,7 @@ mesh {
 	weight 46 3 1.000000 ( -9.426809 32.825138 -7.609176 )
 	weight 47 3 1.000000 ( -8.879979 31.908741 -7.623061 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Manned/Turret_Manned_5.tga"
+	shader "Turret_Manned_5.tga"
 	numverts 6
 
 	vert 0 ( 0.000000 0.000000 ) 0 1
@@ -4863,7 +4863,7 @@ mesh {
 	weight 4 3 1.000000 ( 7.698232 16.081575 -11.824023 )
 	weight 5 3 1.000000 ( -4.942667 9.962276 -11.916740 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Manned/Turret_Manned_6.tga"
+	shader "Turret_Manned_6.tga"
 	numverts 12
 
 	vert 0 ( 0.000000 0.000000 ) 0 1

@@ -55,7 +55,7 @@ joints {
 	"FOOT_R" 47 ( -2.227280 -28.993031 47.479214 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_F_civilian1/NPC_F_civilian1_0.tga"
+	shader "NPC_F_civilian1_0.tga"
 	numverts 384
 
 	vert 0 ( 0.410156 0.117188 ) 0 1
@@ -1471,7 +1471,7 @@ mesh {
 	weight 636 32 1.000000 ( -0.685259 -0.606606 -5.102460 )
 	weight 637 32 1.000000 ( 0.615400 -0.079803 -5.172589 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_F_civilian1/NPC_F_civilian1_1.tga"
+	shader "NPC_F_civilian1_1.tga"
 	numverts 1086
 
 	vert 0 ( 0.980469 0.230469 ) 0 1
@@ -5365,7 +5365,7 @@ mesh {
 	weight 1710 37 1.000000 ( -0.363527 0.453999 0.075867 )
 	weight 1711 32 1.000000 ( 0.026446 -0.648903 -2.490420 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_F_civilian1/NPC_F_civilian1_2.tga"
+	shader "NPC_F_civilian1_2.tga"
 	numverts 276
 
 	vert 0 ( 0.199219 0.160156 ) 0 1
@@ -6443,7 +6443,7 @@ mesh {
 	weight 514 43 1.000000 ( 2.769450 -11.302801 -1.330410 )
 	weight 515 43 1.000000 ( 0.848730 -11.323601 -3.884740 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_F_civilian1/NPC_F_civilian1_3.tga"
+	shader "NPC_F_civilian1_3.tga"
 	numverts 390
 
 	vert 0 ( 0.398438 -0.320312 ) 0 3
@@ -7839,7 +7839,7 @@ mesh {
 	weight 604 43 0.850000 ( 0.558280 -20.211000 -3.393210 )
 	weight 605 44 0.150000 ( 1.285890 -0.972900 -2.851820 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/NPC_F_civilian1/NPC_F_civilian1_4.tga"
+	shader "NPC_F_civilian1_4.tga"
 	numverts 618
 
 	vert 0 ( 0.589844 0.875000 ) 0 1

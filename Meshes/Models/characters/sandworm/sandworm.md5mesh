@@ -49,7 +49,7 @@ joints {
 	"torsob04" 41 ( 1.457873 -49.041065 -1.733157 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/sandworm/sandworm_0.tga"
+	shader "sandworm_0.tga"
 	numverts 828
 
 	vert 0 ( 0.660156 0.382812 ) 0 1
@@ -3319,7 +3319,7 @@ mesh {
 	weight 1602 34 0.173961 ( -0.071954 5.563837 -0.862197 )
 	weight 1603 37 0.056126 ( -0.071954 4.933414 -3.231190 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/sandworm/sandworm_1.tga"
+	shader "sandworm_1.tga"
 	numverts 396
 
 	vert 0 ( 0.812500 0.511719 ) 0 3
@@ -5431,7 +5431,7 @@ mesh {
 	weight 1308 13 0.321136 ( 0.766219 11.240154 1.184952 )
 	weight 1309 14 0.642098 ( 0.766219 8.425156 -2.001196 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/sandworm/sandworm_2.tga"
+	shader "sandworm_2.tga"
 	numverts 330
 
 	vert 0 ( 0.003906 0.992188 ) 0 4
@@ -7261,7 +7261,7 @@ mesh {
 	weight 1158 7 0.795065 ( 1.138700 1.300598 1.424050 )
 	weight 1159 9 0.062200 ( -6.717670 -2.049632 2.963677 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/sandworm/sandworm_3.tga"
+	shader "sandworm_3.tga"
 	numverts 474
 
 	vert 0 ( 0.378906 0.003906 ) 0 3

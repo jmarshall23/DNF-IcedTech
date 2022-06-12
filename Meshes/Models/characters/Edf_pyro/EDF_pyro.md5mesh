@@ -45,7 +45,7 @@ joints {
 	"FOOT_R" 37 ( -4.180456 -29.218674 49.645702 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_pyro/EDF_pyro_0.tga"
+	shader "EDF_pyro_0.tga"
 	numverts 732
 
 	vert 0 ( 0.183594 0.593750 ) 0 2
@@ -2677,7 +2677,7 @@ mesh {
 	weight 1156 2 1.000000 ( 0.054025 5.967197 -10.689320 )
 	weight 1157 2 1.000000 ( -4.285465 6.218498 -10.099600 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_pyro/EDF_pyro_1.tga"
+	shader "EDF_pyro_1.tga"
 	numverts 1251
 
 	vert 0 ( 0.421875 0.292969 ) 0 2
@@ -6925,7 +6925,7 @@ mesh {
 	weight 1734 2 1.000000 ( -2.575745 15.124996 8.061561 )
 	weight 1735 2 1.000000 ( -2.575745 -6.426201 9.379641 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_pyro/EDF_pyro_2.tga"
+	shader "EDF_pyro_2.tga"
 	numverts 396
 
 	vert 0 ( 0.003906 0.390625 ) 0 1
@@ -8305,7 +8305,7 @@ mesh {
 	weight 576 2 1.000000 ( 0.054025 9.866001 -14.267960 )
 	weight 577 2 1.000000 ( -4.285465 9.866001 -14.267960 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_pyro/EDF_pyro_3.tga"
+	shader "EDF_pyro_3.tga"
 	numverts 258
 
 	vert 0 ( 0.839844 0.253906 ) 0 1

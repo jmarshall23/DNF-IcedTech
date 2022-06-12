@@ -14,7 +14,7 @@ joints {
 	"Barrel_R" 6 ( -14.440194 152.956711 -1.134179 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedB/Turret_MannedB_0.tga"
+	shader "Turret_MannedB_0.tga"
 	numverts 504
 
 	vert 0 ( -0.187500 0.250000 ) 0 1
@@ -1536,7 +1536,7 @@ mesh {
 	weight 502 2 1.000000 ( 1.817898 -37.499115 40.784687 )
 	weight 503 2 1.000000 ( -1.911762 -37.499115 40.784687 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedB/Turret_MannedB_1.tga"
+	shader "Turret_MannedB_1.tga"
 	numverts 174
 
 	vert 0 ( 0.492188 0.250000 ) 0 1
@@ -2068,7 +2068,7 @@ mesh {
 	weight 172 7 1.000000 ( -0.408008 23.041012 -1.847003 )
 	weight 173 7 1.000000 ( 1.170492 23.040998 0.886998 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedB/Turret_MannedB_2.tga"
+	shader "Turret_MannedB_2.tga"
 	numverts 453
 
 	vert 0 ( 0.855469 0.031250 ) 0 1
@@ -3437,7 +3437,7 @@ mesh {
 	weight 451 2 1.000000 ( -1.911766 1.022827 11.597799 )
 	weight 452 2 1.000000 ( 1.817894 1.022828 11.597798 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedB/Turret_MannedB_3.tga"
+	shader "Turret_MannedB_3.tga"
 	numverts 366
 
 	vert 0 ( 0.902344 0.718750 ) 0 1
@@ -4545,7 +4545,7 @@ mesh {
 	weight 364 2 1.000000 ( 1.817894 -0.602874 10.104703 )
 	weight 365 2 1.000000 ( -1.911766 -0.602874 10.104704 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedB/Turret_MannedB_4.tga"
+	shader "Turret_MannedB_4.tga"
 	numverts 48
 
 	vert 0 ( 8.500000 0.000000 ) 0 1
@@ -4699,7 +4699,7 @@ mesh {
 	weight 46 3 1.000000 ( -9.426808 32.825169 -7.609344 )
 	weight 47 3 1.000000 ( -8.879988 31.908772 -7.623221 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedB/Turret_MannedB_5.tga"
+	shader "Turret_MannedB_5.tga"
 	numverts 6
 
 	vert 0 ( 0.000000 0.000000 ) 0 1
@@ -4727,7 +4727,7 @@ mesh {
 	weight 4 3 1.000000 ( 7.698232 16.081575 -11.824152 )
 	weight 5 3 1.000000 ( -4.942677 9.962280 -11.916820 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedB/Turret_MannedB_6.tga"
+	shader "Turret_MannedB_6.tga"
 	numverts 12
 
 	vert 0 ( 0.000000 0.000000 ) 0 1
@@ -4773,7 +4773,7 @@ mesh {
 	weight 10 3 1.000000 ( -8.879988 31.908772 -7.623221 )
 	weight 11 3 1.000000 ( -16.294798 16.041645 -10.270479 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_MannedB/Turret_MannedB_7.tga"
+	shader "Turret_MannedB_7.tga"
 	numverts 42
 
 	vert 0 ( 2.656250 0.265625 ) 0 1

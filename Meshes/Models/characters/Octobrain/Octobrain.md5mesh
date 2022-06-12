@@ -53,7 +53,7 @@ joints {
 	"TentRM4" 45 ( -9.941909 60.149448 13.974942 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/Octobrain/Octobrain_0.tga"
+	shader "Octobrain_0.tga"
 	numverts 1179
 
 	vert 0 ( 0.101562 0.894531 ) 0 2
@@ -4427,7 +4427,7 @@ mesh {
 	weight 2004 20 1.000000 ( 4.777160 10.077892 1.914795 )
 	weight 2005 20 1.000000 ( 3.635252 1.294942 3.118065 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/Octobrain/Octobrain_1.tga"
+	shader "Octobrain_1.tga"
 	numverts 417
 
 	vert 0 ( 0.562500 0.531250 ) 0 1
@@ -5810,7 +5810,7 @@ mesh {
 	weight 537 20 0.282819 ( -6.915099 5.126495 -1.659635 )
 	weight 538 21 0.507798 ( 0.830200 -1.922499 0.904301 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/Octobrain/Octobrain_2.tga"
+	shader "Octobrain_2.tga"
 	numverts 291
 
 	vert 0 ( 0.425781 0.105469 ) 0 3
@@ -7061,7 +7061,7 @@ mesh {
 	weight 657 20 0.235941 ( 9.673432 -3.357260 -2.651708 )
 	weight 658 20 1.000000 ( 3.635252 1.294942 3.118065 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/Octobrain/Octobrain_3.tga"
+	shader "Octobrain_3.tga"
 	numverts 342
 
 	vert 0 ( 0.425781 0.597656 ) 0 1
@@ -8245,7 +8245,7 @@ mesh {
 	weight 488 16 0.258370 ( 6.009746 10.029031 9.985670 )
 	weight 489 21 0.741630 ( 3.900770 1.550402 -2.478199 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/Octobrain/Octobrain_4.tga"
+	shader "Octobrain_4.tga"
 	numverts 417
 
 	vert 0 ( 0.988281 0.007812 ) 0 1

@@ -53,7 +53,7 @@ joints {
 	"FOOT_R" 45 ( -9.226920 -39.653061 59.099689 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/alien_pig/alien_pig_0.tga"
+	shader "alien_pig_0.tga"
 	numverts 330
 
 	vert 0 ( 0.593750 0.164062 ) 0 1
@@ -1343,7 +1343,7 @@ mesh {
 	weight 618 28 0.109824 ( -3.287307 1.567521 1.860988 )
 	weight 619 29 0.017896 ( 1.134185 1.882787 3.682497 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/alien_pig/alien_pig_1.tga"
+	shader "alien_pig_1.tga"
 	numverts 345
 
 	vert 0 ( 0.515625 0.253906 ) 0 4
@@ -2752,7 +2752,7 @@ mesh {
 	weight 707 36 0.486439 ( -5.414880 -0.229713 -0.357888 )
 	weight 708 37 0.038463 ( -2.155272 -16.064348 -5.414879 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/alien_pig/alien_pig_2.tga"
+	shader "alien_pig_2.tga"
 	numverts 684
 
 	vert 0 ( 0.351562 0.281250 ) 0 1
@@ -5010,7 +5010,7 @@ mesh {
 	weight 878 28 0.285250 ( -4.263265 1.486650 -0.923370 )
 	weight 879 29 0.253081 ( -0.389494 1.741818 1.158566 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/alien_pig/alien_pig_3.tga"
+	shader "alien_pig_3.tga"
 	numverts 582
 
 	vert 0 ( -0.039062 0.988281 ) 0 1
@@ -7078,7 +7078,7 @@ mesh {
 	weight 892 39 0.272019 ( -8.663670 -3.533100 -7.069790 )
 	weight 893 43 0.277981 ( 8.500410 -3.527897 -7.131240 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/alien_pig/alien_pig_4.tga"
+	shader "alien_pig_4.tga"
 	numverts 798
 
 	vert 0 ( 0.632812 0.742188 ) 0 2

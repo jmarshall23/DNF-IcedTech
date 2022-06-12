@@ -12,7 +12,7 @@ joints {
 	"BeltT" 1 ( 18.951506 115.624359 82.333801 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Tripod/Turret_Tripod_0.tga"
+	shader "Turret_Tripod_0.tga"
 	numverts 6
 
 	vert 0 ( 0.968750 0.257812 ) 0 1
@@ -40,7 +40,7 @@ mesh {
 	weight 4 0 1.000000 ( 14.627968 12.781224 19.098101 )
 	weight 5 0 1.000000 ( 14.564744 2.380908 -8.622709 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Tripod/Turret_Tripod_1.tga"
+	shader "Turret_Tripod_1.tga"
 	numverts 12
 
 	vert 0 ( 0.992188 0.992188 ) 0 1
@@ -86,7 +86,7 @@ mesh {
 	weight 10 0 1.000000 ( 15.047777 81.841881 8.622707 )
 	weight 11 0 1.000000 ( 14.984556 71.441566 19.098198 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Tripod/Turret_Tripod_2.tga"
+	shader "Turret_Tripod_2.tga"
 	numverts 678
 
 	vert 0 ( 0.343750 0.304688 ) 0 1
@@ -2202,7 +2202,7 @@ mesh {
 	weight 748 0 1.000000 ( -10.598040 62.638306 -19.900101 )
 	weight 749 0 1.000000 ( -29.249758 51.210869 0.088770 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Tripod/Turret_Tripod_3.tga"
+	shader "Turret_Tripod_3.tga"
 	numverts 57
 
 	vert 0 ( 0.000000 1.453125 ) 0 1
@@ -2383,7 +2383,7 @@ mesh {
 	weight 55 0 1.000000 ( -35.830246 47.317997 2.752882 )
 	weight 56 0 1.000000 ( -35.830856 47.218201 -2.966978 )
 }mesh {
-	shader "D:/dnf/meshes/models/weapons/Turret_Tripod/Turret_Tripod_4.tga"
+	shader "Turret_Tripod_4.tga"
 	numverts 300
 
 	vert 0 ( 2.218750 0.609375 ) 0 1

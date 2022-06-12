@@ -53,7 +53,7 @@ joints {
 	"FOOT_R" 45 ( -4.171860 -27.577641 49.231602 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sappergengogles/EDF_sappergengogles_0.tga"
+	shader "EDF_sappergengogles_0.tga"
 	numverts 588
 
 	vert 0 ( 0.750000 0.058594 ) 0 1
@@ -2133,7 +2133,7 @@ mesh {
 	weight 892 1 0.300988 ( -3.444612 -2.216702 -5.661111 )
 	weight 893 40 0.699012 ( -3.439388 -1.609203 -5.302641 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sappergengogles/EDF_sappergengogles_1.tga"
+	shader "EDF_sappergengogles_1.tga"
 	numverts 1038
 
 	vert 0 ( 0.003906 0.992188 ) 0 1
@@ -5873,7 +5873,7 @@ mesh {
 	weight 1652 4 0.700000 ( 9.043117 -0.589917 -1.627570 )
 	weight 1653 5 0.300000 ( -0.059135 -1.110740 -1.410970 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sappergengogles/EDF_sappergengogles_2.tga"
+	shader "EDF_sappergengogles_2.tga"
 	numverts 549
 
 	vert 0 ( 0.703125 0.785156 ) 0 2
@@ -7653,7 +7653,7 @@ mesh {
 	weight 670 2 0.660981 ( 0.058834 10.237896 -3.894700 )
 	weight 671 29 0.339019 ( 0.045022 -1.735100 -3.789890 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sappergengogles/EDF_sappergengogles_3.tga"
+	shader "EDF_sappergengogles_3.tga"
 	numverts 378
 
 	vert 0 ( 0.828125 -0.031250 ) 0 2
@@ -8909,7 +8909,7 @@ mesh {
 	weight 488 30 1.000000 ( -0.500173 -0.354698 -6.497721 )
 	weight 489 30 1.000000 ( 0.515516 -0.757996 -6.444031 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sappergengogles/EDF_sappergengogles_4.tga"
+	shader "EDF_sappergengogles_4.tga"
 	numverts 93
 
 	vert 0 ( 0.167969 0.367188 ) 0 1
@@ -9230,7 +9230,7 @@ mesh {
 	weight 123 30 1.000000 ( 3.273902 3.491005 -3.683851 )
 	weight 124 30 1.000000 ( 3.384702 2.530701 -2.113011 )
 }mesh {
-	shader "D:/dnf/meshes/models/characters/EDF_sappergengogles/EDF_sappergengogles_5.tga"
+	shader "EDF_sappergengogles_5.tga"
 	numverts 132
 
 	vert 0 ( 0.984375 0.031250 ) 0 1
