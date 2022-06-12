@@ -772,31 +772,31 @@ class WBrowserMesh : public WBrowser
 
 						GWarn->BeginSlowTask(*meshName, 1, 0);
 
+						wsprintf(meshFilename, TEXT("D:/dnf/meshes/models/weapons/%s"), *meshName);
+						_wmkdir(meshFilename);
+
 						if (MeshInst->Mac->mSkeleton != nullptr)
 						{
-							wsprintf(meshFilename, TEXT("D:/dnf/meshes/models/characters/%s"), *meshName);
-							_wmkdir(meshFilename);
-
-							wsprintf(meshFilename, TEXT("D:/dnf/meshes/models/characters/%s/%s.md5mesh"), *meshName, *meshName);
-							wsprintf(animFilename, TEXT("D:/dnf/meshes/models/characters/%s/%s.md5anim"), *meshName, *meshName);
-
-							char meshFilenameTemp[2048];
-							char animFilenameTemp[2048];
-							wcstombs(meshFilenameTemp, meshFilename, wcslen(meshFilename) + 1);
-							wcstombs(animFilenameTemp, animFilename, wcslen(animFilename) + 1);
-
-
-							MeshInst->ExportToMD5Mesh(meshFilenameTemp);
-							MeshInst->ExportSequences(animFilenameTemp);
+							//wsprintf(meshFilename, TEXT("D:/dnf/meshes/models/weapons/%s/%s.md5mesh"), *meshName, *meshName);
+							//wsprintf(animFilename, TEXT("D:/dnf/meshes/models/weapons/%s/%s.md5anim"), *meshName, *meshName);
+							//
+							//char meshFilenameTemp[2048];
+							//char animFilenameTemp[2048];
+							//wcstombs(meshFilenameTemp, meshFilename, wcslen(meshFilename) + 1);
+							//wcstombs(animFilenameTemp, animFilename, wcslen(animFilename) + 1);
+							//
+							//
+							//MeshInst->ExportToMD5Mesh(meshFilenameTemp);
+							//MeshInst->ExportSequences(animFilenameTemp);
 						}
 						else
 						{
-							//wsprintf(meshFilename, TEXT("../meshes/models/characters/%s/%s.obj"), *meshName, *meshName);
-							//
-							//char meshFilenameTemp[2048];
-							//wcstombs(meshFilenameTemp, meshFilename, wcslen(meshFilename) + 1);
-							//
-							//MeshInst->ExportToOBJ(meshFilenameTemp);
+							wsprintf(meshFilename, TEXT("D:/dnf/meshes/models/weapons/%s/%s.md3"), *meshName, *meshName);
+							
+							char meshFilenameTemp[2048];
+							wcstombs(meshFilenameTemp, meshFilename, wcslen(meshFilename) + 1);
+							
+							MeshInst->ExportToMD3(meshFilenameTemp);
 						}
 
 						GWarn->EndSlowTask();

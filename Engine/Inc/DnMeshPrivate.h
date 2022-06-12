@@ -22,6 +22,10 @@
 #include "..\..\Cannibal\CpjFmt.h"
 #pragma pack(pop)
 
+// jmarshall
+#include "DnMeshMD3.h"
+// jmarshall end
+
 //============================================================================
 //    DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS
 //============================================================================
@@ -134,6 +138,9 @@ class ENGINE_API UDukeMeshInstance : public UMeshInstance
 	void ExportToMD5Mesh(const char* fileName);
 	void ExportToOBJ(const char *fileName);
 	void ExportTexture(UTexture* texture, const char* fileName);
+
+	void ExportToMD3(const char* fileName);
+	void WriteToMD3(const char* fileName, const TArray<md3ExportSurface_t>& meshes);
 
 	void WriteTGA(const char* filename, FRainbowPtr &data, const DWORD*palette, int width, int height, bool flipVertical);
 // jmarshall end
