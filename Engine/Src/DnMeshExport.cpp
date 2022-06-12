@@ -750,6 +750,9 @@ void UDukeMeshInstance::ExportToMD3(const char* fileName)
 		if (TempTris[i].texture == nullptr)
 			continue;
 
+		if (TempTris[i].texture->imagePtr == nullptr)
+			continue;
+
 		for (int d = 0; d < meshes.Num(); d++)
 		{
 			if (TempTris[i].texture->imagePtr == meshes(d).texture)
