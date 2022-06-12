@@ -772,7 +772,7 @@ class WBrowserMesh : public WBrowser
 
 						GWarn->BeginSlowTask(*meshName, 1, 0);
 
-						wchar_t* package = TEXT("vehicles");
+						wchar_t* package = TEXT("zone5_area51");
 
 						wsprintf(meshFilename, TEXT("D:/dnf/meshes/models/%s/%s"), package, *meshName);
 						_wmkdir(meshFilename);
