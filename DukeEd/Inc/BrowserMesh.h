@@ -275,78 +275,7 @@ class WSequenceFrame : public WDialog
 	}
 	void RefreshAnimList()
 	{
-		if (!MeshViewport || !MeshViewport->Actor || !MeshViewport->MiscRes)
-			return;
-
-		// Get a duke mesh pointer
-		UDukeMesh* DukeMesh = (UDukeMesh*) MeshViewport->MiscRes;
-		ConfigEdit.SetText( *DukeMesh->ConfigName );
-
-		// Get a mesh instance.
-		UDukeMeshInstance* MeshInst = (UDukeMeshInstance*) DukeMesh->GetInstance( MeshViewport->Actor );
-
-		// Get any normal animations.
-		AnimCombo.Empty();
-		if ( MeshInst->Mac->mSequences.GetCount() > 0 )
-		{
-			for ( DWORD i=0; i<MeshInst->Mac->mSequences.GetCount(); i++ )
-			{
-				AnimCombo.AddString( appFromAnsi(MeshInst->Mac->mSequences[i]->GetName()) );
-			}
-			::EnableWindow( AnimCombo.hWnd, 1 );
-			::EnableWindow( PlayButton.hWnd, 1 );
-			::EnableWindow( ForwardButton.hWnd, 1 );
-			::EnableWindow( BackButton.hWnd, 1 );
-			AnimCombo.SetCurrent(0);
-			OnAnimSelChange();
-		}
-		else 
-		{
-			// Load the configuration and get skeletal animations.
-			OCpjConfig* Config = OCpjConfig::New( NULL );
-			TCHAR FileName[256];
-			appStrcpy( FileName, _T("..\\Meshes\\") );
-			appStrcat( FileName, *DukeMesh->ConfigName );
-			TCHAR* Xtra = appStrstr( FileName, _T("cpj\\") );
-			Xtra += 3;
-			if (Xtra) *Xtra = _T('\0');
-			debugf( TEXT("Attempting to load Cannibal project %s"), FileName );
-			if (Config->LoadFile( (char*) appToAnsi(FileName) ))
-			{
-				debugf( TEXT("Cannibal project loaded.") );
-				MeshInst->Mac->LoadConfig( Config );
-				INT NumSequences = MeshInst->GetNumSequences();
-
-				::EnableWindow( AnimCombo.hWnd, NumSequences );
-				::EnableWindow( PlayButton.hWnd, NumSequences );
-				::EnableWindow( ForwardButton.hWnd, NumSequences );
-				::EnableWindow( BackButton.hWnd, NumSequences );
-
-				// Fill the anim combo.
-				Sequences.Empty();
-				if ( NumSequences )
-					for ( INT i=0; i<NumSequences; i++ )
-					{
-						FName SequenceName = MeshInst->GetSeqName( MeshInst->GetSequence(i) );
-						Sequences.Set( SequenceName, i );
-						AnimCombo.AddString( *SequenceName );
-					}
-				else
-					AnimCombo.AddString( _T("No Sequences") );
-				AnimCombo.SetCurrent(0);
-				OnAnimSelChange();
-			} else {
-				::EnableWindow( AnimCombo.hWnd, 0 );
-				::EnableWindow( PlayButton.hWnd, 0 );
-				::EnableWindow( ForwardButton.hWnd, 0 );
-				::EnableWindow( BackButton.hWnd, 0 );
-				Sequences.Empty();
-				AnimCombo.AddString( _T("Failed to load project.") );
-				AnimCombo.SetCurrent(0);
-				debugf( TEXT("Failed to load Cannibal project.") );
-			}
-			Config->Destroy();
-		}
+		
 	}
 	FString GetCurrentMeshName()
 	{
@@ -746,117 +675,16 @@ class WBrowserMesh : public WBrowser
 // jmarshall
 			case IDMM_EXPORT_MESH:
 				{
-					FString Package = SequenceFrame->PackageCombo.GetString(SequenceFrame->PackageCombo.GetCurrent());
-					FString Group = SequenceFrame->GroupCombo.GetString(SequenceFrame->GroupCombo.GetCurrent());
-
-					FStringOutputDevice GetPropResult = FStringOutputDevice();
-					TCHAR QueryString[256];
-					appSprintf(QueryString, TEXT("Query Type=Mesh Package=\"%s\" GROUP=\"%s\""), *Package, *Group);
-					GEditor->Get(TEXT("OBJ"), QueryString, GetPropResult);
-
-					TArray<FString> StringArray;
-					ParseStringToArray(TEXT(" "), *GetPropResult, &StringArray);										
-
-					for (INT x = 0; x < StringArray.Num(); x++)
-					{
-						static TCHAR meshFilename[2048];
-						static TCHAR animFilename[2048];
-
-						SequenceFrame->SetIndex(x);
-						RefreshViewport();
-
-						UDukeMesh* DukeMesh = (UDukeMesh*)MeshViewport->MiscRes;
-						UDukeMeshInstance* MeshInst = (UDukeMeshInstance*)DukeMesh->GetInstance(MeshViewport->Actor);
-
-						FString meshName = SequenceFrame->GetCurrentMeshName();
-
-						GWarn->BeginSlowTask(*meshName, 1, 0);
-
-						wchar_t* package = TEXT("zone5_area51");
-
-						wsprintf(meshFilename, TEXT("D:/dnf/meshes/models/%s/%s"), package, *meshName);
-						_wmkdir(meshFilename);
-
-						if (MeshInst->Mac->mSkeleton != nullptr)
-						{
-							wsprintf(meshFilename, TEXT("D:/dnf/meshes/models/%s/%s/%s.md5mesh"),package, *meshName, *meshName);
-							wsprintf(animFilename, TEXT("D:/dnf/meshes/models/%s/%s/%s.md5anim"),package, *meshName, *meshName);
-
-							char meshFilenameTemp[2048];
-							char animFilenameTemp[2048];
-							wcstombs(meshFilenameTemp, meshFilename, wcslen(meshFilename) + 1);
-							wcstombs(animFilenameTemp, animFilename, wcslen(animFilename) + 1);
-
-
-							MeshInst->ExportToMD5Mesh(meshFilenameTemp);
-							MeshInst->ExportSequences(animFilenameTemp);
-						}
-						else
-						{
-							wsprintf(meshFilename, TEXT("D:/dnf/meshes/models/%s/%s/%s.md3"), package, *meshName, *meshName);
-							
-							char meshFilenameTemp[2048];
-							wcstombs(meshFilenameTemp, meshFilename, wcslen(meshFilename) + 1);
-							
-							MeshInst->ExportToMD3(meshFilenameTemp);
-						}
-
-						GWarn->EndSlowTask();
-					}
+				
 				}
 				break;
 			case IDMM_EXPORT_SKELMESH:
 			{
-				OPENFILENAMEA ofn;
-				char File[8192] = "\0";
-				FString Package = SequenceFrame->PackageCombo.GetString(SequenceFrame->PackageCombo.GetCurrent());
-
-				::sprintf(File, "%s.md5mesh", TCHAR_TO_ANSI(*Package));
-
-				ZeroMemory(&ofn, sizeof(OPENFILENAMEA));
-				ofn.lStructSize = sizeof(OPENFILENAMEA);
-				ofn.hwndOwner = hWnd;
-				ofn.lpstrFile = File;
-				ofn.nMaxFile = sizeof(char) * 8192;
-				ofn.lpstrFilter = "Skeletal md5mesh (*.md5mesh)\0*.md5mesh\0All Files\0*.*\0\0";
-				ofn.lpstrInitialDir = appToAnsi(*(GLastDir[eLASTDIR_DMX]));
-				ofn.lpstrDefExt = "md5mesh";
-				ofn.lpstrTitle = "Export Skeletal Mesh";
-				ofn.Flags = OFN_HIDEREADONLY | OFN_NOCHANGEDIR | OFN_OVERWRITEPROMPT;
-
-				if (GetSaveFileNameA(&ofn))
-				{
-					UDukeMesh* DukeMesh = (UDukeMesh*)MeshViewport->MiscRes;
-					UDukeMeshInstance* MeshInst = (UDukeMeshInstance*)DukeMesh->GetInstance(MeshViewport->Actor);
-					MeshInst->ExportToMD5Mesh(File);
-				}
+				
 				break;
 			}
 			case IDMM_EXPORT_SEQUENCES:
-			{
-				OPENFILENAMEA ofn;
-				char File[8192] = "\0";
-				FString Package = SequenceFrame->PackageCombo.GetString(SequenceFrame->PackageCombo.GetCurrent());
-
-				::sprintf(File, "%s.md5mesh", TCHAR_TO_ANSI(*Package));
-
-				ZeroMemory(&ofn, sizeof(OPENFILENAMEA));
-				ofn.lStructSize = sizeof(OPENFILENAMEA);
-				ofn.hwndOwner = hWnd;
-				ofn.lpstrFile = File;
-				ofn.nMaxFile = sizeof(char) * 8192;
-				ofn.lpstrFilter = "Sequences md5anim (*.md5anim)\0*.md5anim\0All Files\0*.*\0\0";
-				ofn.lpstrInitialDir = appToAnsi(*(GLastDir[eLASTDIR_DMX]));
-				ofn.lpstrDefExt = "md5anim";
-				ofn.lpstrTitle = "Export All Sequnces";
-				ofn.Flags = OFN_HIDEREADONLY | OFN_NOCHANGEDIR | OFN_OVERWRITEPROMPT;
-
-				if (GetSaveFileNameA(&ofn))
-				{
-					UDukeMesh* DukeMesh = (UDukeMesh*)MeshViewport->MiscRes;
-					UDukeMeshInstance* MeshInst = (UDukeMeshInstance*)DukeMesh->GetInstance(MeshViewport->Actor);
-					MeshInst->ExportSequences(File);
-				}
+			{				
 				break;
 			}
 // jmarshall end

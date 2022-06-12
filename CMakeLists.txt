@@ -45,7 +45,6 @@ include_directories(DirectX8/Inc)
 link_directories(DirectX8/Lib)
 
 # Projects
-add_subdirectory(Cannibal)
 add_subdirectory(dnGame/Src)
 add_subdirectory(dnAI/Src)
 add_subdirectory(Engine/Src)

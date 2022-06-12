@@ -264,7 +264,7 @@ UEngine* InitEngine(DWORD splash_id)
 // Unreal's main message loop.  All windows in Unreal receive messages
 // somewhere below this function on the stack.
 //
-void MainLoop(UEngine* Engine,U32 needs_ipc)
+void MainLoop(UEngine* Engine,unsigned long needs_ipc)
 {
 	check(Engine);
 

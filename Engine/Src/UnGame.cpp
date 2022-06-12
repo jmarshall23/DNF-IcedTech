@@ -8,8 +8,6 @@
 
 #include "EnginePrivate.h"
 
-#include "..\..\Cannibal\CannibalUnr.h"
-
 /*-----------------------------------------------------------------------------
 	Object class implementation.
 -----------------------------------------------------------------------------*/
@@ -1576,9 +1574,6 @@ void __fastcall UGameEngine::Tick( FLOAT DeltaSeconds )
 	// Update subsystems.
 	UObject::StaticTick();				
 	GCache.Tick();
-
-	// Tick animation system.
-	OMacActor::Tick();
 
 	// Update the level.
 	GameCycles=0;

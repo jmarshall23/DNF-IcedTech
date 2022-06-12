@@ -9,63 +9,6 @@
 #include "EnginePrivate.h"
 
 /*-----------------------------------------------------------------------------
-	CDH: Cannibal connection
------------------------------------------------------------------------------*/
-#include "..\..\Cannibal\CannibalUnr.h"
-
-class CUnrealLogTarget
-: public ILogTarget
-{
-public:
-	void Init(NChar* inTitle) {}
-	void Shutdown() {}
-	void Write(NChar* inStr)
-	{
-		if (!inStr)
-			return;
-		if (inStr[0])
-			inStr[strlen(inStr)-1] = 0; // cut off trailing \n which is automatically added
-		debugf(TEXT("Cannibal Log: %s"), appFromAnsi(inStr));
-	}
-};
-
-static CUnrealLogTarget GCannibalUnrealLogTarget;
-
-static void CannibalQuit()
-{
-	appErrorf(TEXT("Cannibal Fatal Error"));
-}
-
-static void CannibalInit()
-{
-	STR_ArgInit(__argc,__argv);
-	FILE_BoxInit(NULL);
-	LOG_Init("Cannibal", CannibalQuit, LOGLVL_Normal, 0);
-	LOG_AddTarget(&GCannibalUnrealLogTarget);
-	TIME_Init();
-	MSG_Init();
-	OBJ_Init(NULL);
-	PLG_Init(".\\");
-	IPC_Init("IPC_DNF");
-}
-
-static void CannibalShutdown()
-{
-	GLog->Logf( TEXT("Cannibal shutdown...") );
-	//GLog->Logf( TEXT("...IPC...") );
-	//IPC_Shutdown();
-	//GLog->Logf( TEXT("...OBJ...") );
-	//OBJ_Shutdown();
-	//GLog->Logf( TEXT("...PLG...") );
-	//PLG_Shutdown();
-	//GLog->Logf( TEXT("...MSG...") );
-	//MSG_Shutdown();
-	//GLog->Logf( TEXT("...LOG...") );
-	//LOG_Shutdown();
-	GLog->Logf( TEXT("...Cannibal shutdown complete.") );
-}
-
-/*-----------------------------------------------------------------------------
 	Object class implementation.
 -----------------------------------------------------------------------------*/
 
@@ -131,9 +74,6 @@ void UEngine::InitAudio()
 static TCHAR YesKey=0, NoKey=0;//oldver
 void UEngine::Init()
 {
-	// CDH: Cannibal global initialization
-	CannibalInit();
-
 	// Add the intrinsic names.
 	#define NAMES_ONLY
 	#define AUTOGENERATE_NAME(name) ENGINE_##name = FName(TEXT(#name),FNAME_Intrinsic);
@@ -189,9 +129,6 @@ void UEngine::Destroy()
 	FURL::StaticExit();
 	GEngineMem.Exit();
 	GCache.Exit( 1 );
-
-	// CDH: Cannibal global shutdown
-	CannibalShutdown();
 
 	Super::Destroy();
 }

@@ -11,42 +11,6 @@
 #include "EnginePrivate.h"
 
 //============================================================================
-//    DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS
-//============================================================================
-//============================================================================
-//    CLASSES / STRUCTURES
-//============================================================================
-class ODukeMeshEffectChannel
-: public OMacChannel
-{
-	OBJ_CLASS_DEFINE(ODukeMeshEffectChannel, OMacChannel);
-
-	AActor* mAnimActor;
-	AMeshEffect* mEffectActor;
-	DWORD mChannelIndex;
-
-	NBool EvalBones(OMacActor* inActor)
-	{
-		NBool result = (mAnimActor->eventOnEvalBones(mChannelIndex)!=0);
-		if (mEffectActor && mEffectActor->bAffectsBones)
-		{
-			mEffectActor->eventEvalBones(mChannelIndex, mAnimActor);
-			result = 1;
-		}
-		return(result);
-	}
-	NBool EvalVerts(OMacActor* inActor, NDword inNumVerts, NWord* inVertRelay, VVec3* ioVerts)
-	{
-		if (!mEffectActor || !mEffectActor->bAffectsVerts)
-			return(0);
-		for (DWORD i=0;i<inNumVerts;i++)
-			mEffectActor->eventEvalVert(mChannelIndex, mAnimActor, *(FVector*)(&ioVerts[i]));
-		return(1);
-	}
-};
-OBJ_CLASS_IMPLEMENTATION(ODukeMeshEffectChannel, OMacChannel, 0);
-
-//============================================================================
 //    PRIVATE DATA
 //============================================================================
 //============================================================================
@@ -58,250 +22,6 @@ OBJ_CLASS_IMPLEMENTATION(ODukeMeshEffectChannel, OMacChannel, 0);
 /*-----------------------------------------------------------------------------
 	CDH: Cannibal connection
 -----------------------------------------------------------------------------*/
-#include "..\..\Cannibal\CannibalUnr.h"
-
-#pragma warning(disable: 4505) // unreferenced local function
-
-class CUnrealLogTarget
-: public ILogTarget
-{
-public:
-	void Init(NChar* inTitle) {}
-	void Shutdown() {}
-	void Write(NChar* inStr)
-	{
-		if (!inStr)
-			return;
-		debugf(TEXT("Cannibal Log: %s"), appFromAnsi(inStr));
-	}
-};
-
-static CUnrealLogTarget GCannibalUnrealLogTarget;
-
-static void CannibalQuit()
-{
-	appErrorf(TEXT("Cannibal Fatal Error"));
-}
-
-static void CannibalInit()
-{
-	STR_ArgInit(__argc,__argv);
-	FILE_BoxInit(NULL);
-	LOG_Init("Cannibal", CannibalQuit, LOGLVL_Normal, 0);
-	LOG_AddTarget(&GCannibalUnrealLogTarget);
-	MSG_Init();
-	OBJ_Init(NULL);
-	PLG_Init(".\\");
-}
-
-static void SetMeshBasePath()
-{
-	if (!CPJ_GetBasePath()[0])
-	{
-		FString MeshPath;
-		if (!GConfig->GetString(TEXT("MeshConfig"), TEXT("MeshBasePath"), MeshPath))
-			MeshPath = TEXT("..") PATH_SEPARATOR TEXT("Meshes");			
-		
-		FString BasePath(appBaseDir());
-		BasePath += MeshPath;
-		
-		CPJ_SetBasePath(appToAnsi(*BasePath));
-	}
-}
-
-DWORD WINAPI ConfigEditThreadEntry(void* inParam)
-{
-	static NBool mutex = 0; // don't allow more than one edit box to exist at once
-	if (mutex)
-		return(0);
-	mutex = 1;
-	MAC_EditBox(IPC_GetCurrentProcess());
-	mutex = 0;
-	return(0);
-}
-
-MSG_FUNC_C(ODukeMacActor, ConfigEdit, "", (ODukeMacActor* This, IMsg*))
-{
-	SetMeshBasePath();
-
-	DWORD boxThreadId;
-	HANDLE boxThread = CreateThread(NULL, 0, ConfigEditThreadEntry, 0, 0, &boxThreadId);
-
-	IPC_PostMessage(IPC_GetCurrentProcess(), MACEDIT_IPC_PROTOCOL_IN, MACEDIT_IPC_IMSG_SETTITLE, 0, "Edit Mesh Configuration");
-
-	static NChar buf[256];
-	strcpy(buf, appToAnsi(*This->mOwnerInstance->Mesh->ConfigName));
-	IPC_PostMessage(IPC_GetCurrentProcess(), MACEDIT_IPC_PROTOCOL_IN, MACEDIT_IPC_IMSG_SELECTCONFIG, 0, buf);
-	
-	return(1);
-}
-/*
-MSG_FUNC_C(ODukeMacActor, ConfigEdit, "", (ODukeMacActor* This, IMsg*))
-{
-	static NChar buf[256];
-	SetMeshBasePath();
-	sprintf(buf, "CblMacEd %s %d", CPJ_GetBasePath(), IPC_GetCurrentProcess());
-
-	PROCESS_INFORMATION pinfo;
-	STARTUPINFOA sinfo;
-	memset(&sinfo, 0, sizeof(STARTUPINFO));
-	sinfo.cb = sizeof(STARTUPINFO);
-
-	if (!CreateProcessA(NULL, buf, NULL, NULL, false, 0, NULL, NULL, &sinfo, &pinfo))
-	{
-		LOG_Logf("CreateProcess failed, GetLastError=%d", GetLastError());
-		return(1);
-	}
-	_sleep(5000);
-	NDword kidProcess = IPC_GetNamedProcess("IPC_CBLMACED");
-	if (!kidProcess)
-		return(1);
-	
-	//sprintf(buf, "%d", IPC_GetCurrentProcess());
-	//_spawnl(_P_NOWAIT, "munchie", "munchie", buf, NULL);	
-	//while (!IPC_SendMessage(kidProcess, MACEDIT_IPC_PROTOCOL_IN, MACEDIT_IPC_IMSG_ISREADY, 0, NULL, NULL))
-	//	_sleep(0);
-	IPC_PostMessage(kidProcess, MACEDIT_IPC_PROTOCOL_IN, MACEDIT_IPC_IMSG_SETTITLE, 0, "Edit Mesh Configuration");
-	strcpy(buf, appToAnsi(*This->mOwnerInstance->Mesh->ConfigName));
-	IPC_PostMessage(kidProcess, MACEDIT_IPC_PROTOCOL_IN, MACEDIT_IPC_IMSG_SELECTCONFIG, 0, buf);
-	
-	return(1);
-}
-*/
-// jmarshall - switched to pointers for assembly removal
-MSG_FUNC_C(ODukeMacActor, SetOrigin, "fff", (ODukeMacActor* This, IMsg*, NFloat *inX, NFloat *inY, NFloat *inZ))
-{
-	This->mOrigin = VVec3(*inX,*inY,*inZ);
-	This->mDukeOrigin = FVector(*inX,*inY,*inZ);
-	This->mDukeOrigin = This->mDukeOrigin.ToUnr();
-	return(1);
-}
-MSG_FUNC_C(ODukeMacActor, SetRotation, "fff", (ODukeMacActor* This, IMsg*, NFloat *inRoll, NFloat *inPitch, NFloat *inYaw))
-{
-	float froll = *inRoll;
-	float fpitch = *inPitch;
-	float fyaw = *inYaw;
-
-	This->mRotation = VEulers3(M_DEGTORAD(*inRoll),M_DEGTORAD(*inPitch),M_DEGTORAD(*inYaw));
-	froll = froll *32768.f/180.f;
-	fpitch = -fpitch *32768.f/180.f;
-	fyaw = -fyaw *32768.f/180.f;
-	This->mDukeRotOrigin = FRotator(fpitch, fyaw, froll);
-	return(1);
-}
-MSG_FUNC_C(ODukeMacActor, SetScale, "fff", (ODukeMacActor* This, IMsg*, NFloat *inX, NFloat *inY, NFloat *inZ))
-{
-	This->mScale = VVec3(*inX,*inY,*inZ);
-	This->mDukeScale = FVector(*inX,*inY,*inZ);
-	This->mDukeScale = This->mDukeScale.ToUnr();
-	This->mDukeScale.Y = -This->mDukeScale.Y;
-	return(1);
-}
-MSG_FUNC_C(ODukeMacActor, SetBoundsMin, "fff", (ODukeMacActor* This, IMsg*, NFloat *inX, NFloat *inY, NFloat *inZ))
-{
-	This->mBounds[0] = VVec3(*inX,*inY,*inZ);
-	This->mDukeBounds[0] = FVector(*inX,*inY,*inZ);
-	This->mDukeBounds[0] = This->mDukeBounds[0].ToUnr();
-	return(1);
-}
-MSG_FUNC_C(ODukeMacActor, SetBoundsMax, "fff", (ODukeMacActor* This, IMsg*, NFloat *inX, NFloat *inY, NFloat *inZ))
-{
-	This->mBounds[1] = VVec3(*inX,*inY,*inZ);
-	This->mDukeBounds[1] = FVector(*inX,*inY,*inZ);
-	This->mDukeBounds[1] = This->mDukeBounds[1].ToUnr();
-	return(1);
-}
-// jmarshall - end
-
-// Getframe utility functions
-static float GetFrameBegin(UDukeMeshInstance* const MeshInst, AActor* const AnimOwner)
-{
-	// create channel objects as needed
-	check(MeshInst->Mac->mActorChannels.GetCount() >= 16); // must match up with what actor expects
-
-	FLOAT TweenValue = 1.f;
-
-	for (DWORD i=0;i<16;i++)
-	{
-
-		OCpjSequence* Seq = NULL;
-
-		// make sure the channel is empty
-		MeshInst->Mac->mActorChannels[i] = NULL;
-
-		FMeshChannel* MeshChan = &MeshInst->MeshChannels[i];
-
-		// Copy stock animation information to channel zero info
-		if (!i)
-		{
-			MeshChan->bAnimFinished = AnimOwner->bAnimFinished;
-			MeshChan->bAnimLoop = AnimOwner->bAnimLoop;
-			MeshChan->bAnimNotify = AnimOwner->bAnimNotify;
-			MeshChan->bAnimBlendAdditive = AnimOwner->bAnimBlendAdditive;
-			MeshChan->AnimSequence = AnimOwner->AnimSequence;
-			MeshChan->AnimFrame = AnimOwner->AnimFrame;
-			MeshChan->AnimRate = AnimOwner->AnimRate;
-			MeshChan->AnimBlend = AnimOwner->AnimBlend;
-			MeshChan->TweenRate = AnimOwner->TweenRate;
-			MeshChan->AnimLast = AnimOwner->AnimLast;
-			MeshChan->AnimMinRate = AnimOwner->AnimMinRate;
-			MeshChan->OldAnimRate = AnimOwner->OldAnimRate;
-			MeshChan->SimAnim = AnimOwner->SimAnim;
-			/* AH: wasn't getting copied before, probably should be */
-			MeshChan->MeshEffect = AnimOwner->MeshEffect;
-		}
-
-		if ((MeshChan->AnimSequence!=NAME_None) && (Seq = MeshInst->Mac->FindSequence(appToAnsi(*MeshChan->AnimSequence))))
-		{				
-			// channel is a regular sequence
-			Seq->CacheIn();
-			if (Seq->m_Frames.GetCount())
-			{
-				OMacSequenceChannel* chan = OMacSequenceChannel::New(NULL);
-				chan->mSequence = Seq;
-				if (MeshChan->AnimFrame >= 0.f)
-				{
-					chan->mTime = MeshChan->AnimFrame;
-				}
-				else
-				{					
-					// tweening
-					chan->mTime = 0.f;					
-					//chan->mTime = -MeshChan->AnimFrame / MeshChan->AnimRate; // CDH: this is a test, it looks better than 0.f, but still might not be perfect
-																	// Nevermind, commented out because it was fubaring triggercrane and other meshes, need better formula
-					if (!i)
-						TweenValue = 1.f - ((-MeshChan->AnimFrame) * Seq->m_Frames.GetCount());
-				}
-				chan->mBlendAlpha = 1.f - MeshChan->AnimBlend;
-				chan->mBlendMode = MeshChan->bAnimBlendAdditive ? MACSEQBLEND_ADD : MACSEQBLEND_SET;
-				MeshInst->Mac->mActorChannels[i] = chan;
-			}
-		}
-		else
-		{
-			// channel uses a mesh effect rather than a regular sequence
-			ODukeMeshEffectChannel* chan = ODukeMeshEffectChannel::New(NULL);
-			chan->mAnimActor = AnimOwner;
-			chan->mEffectActor = MeshChan->MeshEffect;
-			chan->mChannelIndex = i;
-			MeshInst->Mac->mActorChannels[i] = chan;
-		}
-	}
-	return(TweenValue);
-}
-
-static void GetFrameEnd(UDukeMeshInstance* const MeshInst)
-{
-	// wipe out channel objects
-	for (DWORD i=0;i<16;i++)
-	{
-		if (MeshInst->Mac->mActorChannels[i])
-		{
-			MeshInst->Mac->mActorChannels[i]->Destroy();
-			MeshInst->Mac->mActorChannels[i] = NULL;
-		}
-	}
-}
 
 //============================================================================
 //    GLOBAL FUNCTIONS
@@ -309,10 +29,18 @@ static void GetFrameEnd(UDukeMeshInstance* const MeshInst)
 //============================================================================
 //    CLASS METHODS
 //============================================================================
-/*
-	ODukeMacActor
-*/
-OBJ_CLASS_IMPLEMENTATION(ODukeMacActor, OMacActor, 0);
+
+CMacBone* ODukeMacActor::FindBone(const char* inName) {
+	return nullptr;
+}
+
+OCpjSequence* ODukeMacActor::FindSequence(const char* inName) {
+	return nullptr;
+}
+void ODukeMacActor::Destroy()
+{
+
+}
 
 /*
 	UDukeMeshInstance
@@ -323,16 +51,7 @@ void UDukeMeshInstance::DestroyMacActor()
 {
 	if (!Mac)
 		return;
-	
-	// remove any allocated channels
-	for (NDword i=0;i<Mac->mActorChannels.GetCount();i++)
-	{
-		if (Mac->mActorChannels[i])
-		{
-			Mac->mActorChannels[i]->Destroy();
-			Mac->mActorChannels[i] = NULL;
-		}
-	}
+
 	// destroy the object itself
 	Mac->Destroy();
 	Mac = NULL;
@@ -368,50 +87,7 @@ void UDukeMeshInstance::SetMesh(UMesh* InMesh)
 		STAT(unclock(GStat.SetMeshCycles));
 		return;
 	}
-	
-	// set the base path if it's not already set
-	SetMeshBasePath();
-
-	// load the configuration
-	OCpjConfig* ConfigMac = (OCpjConfig*)CPJ_FindChunk(NULL, OCpjConfig::GetStaticClass(), appToAnsi(*Mesh->ConfigName));
-	if (!ConfigMac)
-		ConfigMac = (OCpjConfig*)CPJ_FindChunk(NULL, OCpjConfig::GetStaticClass(), "default.cpj\\default");
-	if (!ConfigMac)
-		appErrorf(TEXT("UDukeMeshInstance::SetMesh: Default project not found"));
-	Mac = ODukeMacActor::New(NULL);
-	Mac->mOwnerInstance = this;
-	if (!Mac->LoadConfig(ConfigMac))
-	{
-		appErrorf(TEXT("UDukeMeshInstance::SetMesh: LoadConfig failure on %s"), *Mesh->ConfigName);
-		//Mac->Destroy();
-		//Mac = NULL;
-	}
-
-	// map the configuration's textures
-	for (DWORD i=0;i<Mac->mSurfaces.GetCount();i++)
-	{
-		OCpjSurface* surf = Mac->mSurfaces[i];
-		for (DWORD j=0;j<surf->m_Textures.GetCount();j++)
-		{
-			CCpjSrfTex* tex = &surf->m_Textures[j];
-			tex->imagePtr = NULL;
-			if (tex->refName[0])
-			{				
-				tex->imagePtr = FindObject<UTexture>(ANY_PACKAGE, appFromAnsi(tex->refName), 0);
-				if (!tex->imagePtr)
-				{
-					// This is beyond nasty, but LoadObject, due to crappy linker requirements, needs the class to be an exact match... graar :(
-					for (TObjectIterator<UClass> It; It; ++It)
-					{
-						if (It->IsChildOf(UTexture::StaticClass()))
-							if (tex->imagePtr = (UTexture*)StaticLoadObject(*It, NULL, appFromAnsi(tex->refName), NULL, LOAD_None, NULL))
-								break;
-					}
-				}
-			}
-		}
-	}
-
+		
 	STAT(unclock(GStat.SetMeshCycles));
 }
 
@@ -428,13 +104,13 @@ INT UDukeMeshInstance::GetNumSequences()
 {
 	if (!Mac)
 		return(0);
-	return(Mac->mSequences.GetCount());
+	return(Mac->mSequences.Num());
 }
 HMeshSequence UDukeMeshInstance::GetSequence(INT SeqIndex)
 {
 	if (!Mac)
 		return(NULL);
-	return(Mac->mSequences[SeqIndex]);
+	return(&Mac->mSequences(SeqIndex));
 }
 HMeshSequence UDukeMeshInstance::FindSequence(FName SeqName)
 {
@@ -446,7 +122,7 @@ HMeshSequence UDukeMeshInstance::FindSequence(FName SeqName)
 FName UDukeMeshInstance::GetSeqName(HMeshSequence Seq)
 {
 	OCpjSequence* S = (OCpjSequence*)Seq;
-	return(FName(appFromAnsi(S->GetName())));
+	return S->name;
 }
 void UDukeMeshInstance::SetSeqGroupName(FName SequenceName, FName GroupName)
 {
@@ -463,38 +139,32 @@ FName UDukeMeshInstance::GetSeqGroupName(FName SequenceName)
 INT UDukeMeshInstance::GetSeqNumFrames(HMeshSequence Seq)
 {
 	OCpjSequence* S = (OCpjSequence*)Seq;
-	S->CacheIn();
-	return(S->m_Frames.GetCount());
+	return(S->m_Frames.Num());
 }
 FLOAT UDukeMeshInstance::GetSeqRate(HMeshSequence Seq)
 {
 	OCpjSequence* S = (OCpjSequence*)Seq;
-	S->CacheIn();
-	return(S->m_Rate);
+	return 24; // (S->m_Rate);
 }
 INT UDukeMeshInstance::GetSeqNumEvents(HMeshSequence Seq)
 {
 	OCpjSequence* S = (OCpjSequence*)Seq;
-	S->CacheIn();
-	return(S->m_Events.GetCount());
+	return(S->m_Events.Num());
 }
 EMeshSeqEvent UDukeMeshInstance::GetSeqEventType(HMeshSequence Seq, INT Index)
 {
 	OCpjSequence* S = (OCpjSequence*)Seq;
-	S->CacheIn();
-	return((EMeshSeqEvent)S->m_Events[Index].eventType);
+	return((EMeshSeqEvent)S->m_Events(Index).eventType);
 }
 FLOAT UDukeMeshInstance::GetSeqEventTime(HMeshSequence Seq, INT Index)
 {
 	OCpjSequence* S = (OCpjSequence*)Seq;
-	S->CacheIn();
-	return(S->m_Events[Index].time);
+	return(S->m_Events(Index).time);
 }
 const TCHAR* UDukeMeshInstance::GetSeqEventString(HMeshSequence Seq, INT Index)
 {
 	OCpjSequence* S = (OCpjSequence*)Seq;
-	S->CacheIn();
-	return(appFromAnsi(*S->m_Events[Index].paramString));
+	return(*S->m_Events(Index).paramString);
 }
 
 UBOOL UDukeMeshInstance::PlaySequence(HMeshSequence Seq, BYTE Channel, UBOOL bLoop, FLOAT Rate, FLOAT MinRate, FLOAT TweenTime)
@@ -974,18 +644,7 @@ void UDukeMeshInstance::DriveSequences(FLOAT DeltaSeconds)
 
 UTexture* UDukeMeshInstance::GetTexture(INT Count)
 {
-	CCpjSrfTex* Texs = NULL;
-	if (Mac && Mac->mSurfaces[0] && Mac->mSurfaces[0]->m_Textures.GetCount())
-		Texs = &Mac->mSurfaces[0]->m_Textures[0];
-	if( Actor && Actor->GetSkin( Count ) )
-		return Actor->GetSkin( Count );
-	else if( Count!=Actor->SkinIndex && Texs && Texs[Count].imagePtr )
-		return (UTexture*)Texs[Count].imagePtr;
-	else if( Actor && Actor->Skin )
-		return Actor->Skin;
-	else if (Texs)
-		return (UTexture*)Texs[Count].imagePtr;
-	return(NULL);
+	return nullptr; // Mac->mSurfaces(Count).m_Texture;
 }
 void UDukeMeshInstance::GetStringValue(FOutputDevice& Ar, const TCHAR* Key, INT Index)
 {
@@ -1036,7 +695,9 @@ void UDukeMeshInstance::SendStringCommand(const TCHAR* Cmd)
 {
 	if (!Mac)
 		return;
-	Mac->Msgf((char*)appToAnsi(Cmd));
+// jmarshall - todo
+	//Mac->Msgf((char*)appToAnsi(Cmd));
+// jmarshall end
 }
 FCoords UDukeMeshInstance::GetBasisCoords(AActor *actor,FCoords Coords)
 {
@@ -1067,288 +728,26 @@ INT UDukeMeshInstance::GetFrame(FVector* ResultVerts, BYTE* VertsEnabled, INT Si
 
 	STAT(clock(GStat.GetFrameCycles));
 
-	AActor* AnimOwner = Actor;
-	if (Actor->bAnimByOwner && Actor->Owner)
-		 AnimOwner = Actor->Owner;
-
-	Coords = GetBasisCoords(AnimOwner,Coords);
-
-	// start up the getframe
-	INT NumVerts = 0, MaxVerts = 0;
-	FLOAT TweenValue = 1.f;
-	TweenValue = GetFrameBegin(this, AnimOwner);
-	MaxVerts = Mac->mGeometry->m_Verts.GetCount();
-
-	// snag cached vertices
-	UBOOL IsTweening = 0;
-	FCacheItem* Item = NULL;
-	FLOAT Alpha = 1.f;
-	BYTE* Mem = NULL;
-	UBOOL WasCached = 1;
-	
-	QWORD CacheID = MakeCacheID(CID_TweenAnim, Actor, NULL);
-	Mem = GCache.Get(CacheID, Item);
-	if (!Mem || (*(UDukeMesh**)Mem != Mesh))
-	{
-		if (Mem)
-		{
-			// mesh instance changed
-			Item->Unlock();
-			GCache.Flush(CacheID);
-		}
-		Mem = GCache.Create(CacheID, Item, sizeof(UDukeMesh*) + sizeof(FLOAT) + sizeof(FName) + MaxVerts*sizeof(FVector));
-		WasCached = 0;
-	}
-
-	UDukeMesh*& CachedMesh = *(UDukeMesh**)Mem; Mem += sizeof(UDukeMesh*);
-	FLOAT& CachedFrame = *(FLOAT*)Mem; Mem += sizeof(FLOAT);
-	FName& CachedSeq = *(FName*)Mem; Mem += sizeof(FName);
-	FVector* CachedVerts = (FVector*)Mem;
-	if (!WasCached)
-	{
-		CachedMesh = Mesh;
-		CachedFrame = 0.f;
-		CachedSeq = NAME_None;
-	}
-
-	if ((TweenValue < 1.f) && (WasCached))
-	{
-		IsTweening = 1;
-	#ifdef TWEEN_FIX
-		Alpha = 1.0 - AnimOwner->AnimFrame / CachedFrame;		// JEP
-	#else
-		Alpha = TweenValue;
-	#endif
-
-		OCpjSequence* Seq = (Mac->mActorChannels[0] && Mac->mActorChannels[0]->IsA(OMacSequenceChannel::GetStaticClass()))
-			? ((OMacSequenceChannel*)Mac->mActorChannels[0])->mSequence : NULL;
-		if ((CachedSeq!=AnimOwner->AnimSequence) || (Alpha<0.f) || (Alpha>1.f))
-		{
-			CachedSeq = AnimOwner->AnimSequence;
-			CachedFrame = Seq ? (-1.f / Seq->m_Frames.GetCount()) : 0.f;
-			Alpha = 0.f;
-		}
-	}
-
-	// grab the requested vertices
-	NumVerts = Mac->EvaluateVerts(LodLevel, Alpha, (VVec3*)CachedVerts);
-	if (!mesh_GetFrameNoTransform)
-	{
-		// normal getframe
-		FVector* V = CachedVerts;
-		for (INT i=0;i<NumVerts;i++,V++)
-		{
-			*ResultVerts = (V->ToUnr() - Mac->mDukeOrigin).TransformPointBy(Coords);
-			*(BYTE**)&ResultVerts += Size;
-		}
-	}
-	else
-	{
-		// leave EvaluateVerts results intact
-		check(Size == sizeof(FVector));
-		memcpy(ResultVerts, CachedVerts, NumVerts*sizeof(FVector));
-	}
-
-	if (IsTweening)
-		CachedFrame = AnimOwner->AnimFrame;
-	Item->Unlock();
-	GetFrameEnd(this);
-
-	STAT(unclock(GStat.GetFrameCycles));
-
-	return(NumVerts);
+	return 0;
 }
 
 UBOOL UDukeMeshInstance::GetBoneCoords(CMacBone *bone, FCoords& OutCoords)
 {
-	if (!Actor || !Mac || !Mac->mGeometry)
+	if (!Actor || !Mac)
 		return(0);
 
-	FLOAT TweenValue = GetFrameBegin(this, Actor);
-
-	if (!bone)
-	{
-		GetFrameEnd(this);
-		return(0);
-    }
-	VCoords3 c(bone->GetCoords(true));
-	FCoords fc(FVector(0,0,0), *((FVector*)&c.r.vX), *((FVector*)&c.r.vY), *((FVector*)&c.r.vZ));
-	fc = fc.ToUnr();
-	FCoords MeshCoords = GetBasisCoords(GMath.UnitCoords);
-	FCoords BoneCoords = GMath.UnitCoords;
-	BoneCoords.XAxis = fc.XAxis.TransformVectorBy(MeshCoords); 
-    BoneCoords.XAxis.Normalize();
-	BoneCoords.YAxis = fc.YAxis.TransformVectorBy(MeshCoords); 
-    BoneCoords.YAxis.Normalize();
-	BoneCoords.ZAxis = fc.ZAxis.TransformVectorBy(MeshCoords); 
-    BoneCoords.ZAxis.Normalize();
-	BoneCoords.Origin = *((FVector*)&c.t);
-    BoneCoords.Origin = BoneCoords.Origin.ToUnr();
-	BoneCoords.Origin = (BoneCoords.Origin - Mac->mDukeOrigin).TransformPointBy(MeshCoords);
-	OutCoords = BoneCoords.Transpose();
-	GetFrameEnd(this);
-	return(1);
+	return 0;
 }
 
 UBOOL UDukeMeshInstance::GetMountCoords(FName MountName, INT MountType, FCoords& OutCoords, AActor* ChildActor)
 {
 
-	if (!Actor || !Mac || !Mac->mGeometry)
+	if (!Actor || !Mac)
 		return(0);
 
 	STAT(clock(GStat.GetMountCoordsCycles));
 
-	FLOAT TweenValue = GetFrameBegin(this, Actor);
-
-	if (MountType == MOUNT_MeshBone)
-	{
-		CMacBone* bone = Mac->FindBone(appToAnsi(*MountName));
-		if (!bone)
-		{
-			GetFrameEnd(this);
-			STAT(unclock(GStat.GetMountCoordsCycles));
-			return(0);
-		}
-		VCoords3 c(bone->GetCoords(true));
-		FCoords fc(FVector(0,0,0), *((FVector*)&c.r.vX), *((FVector*)&c.r.vY), *((FVector*)&c.r.vZ));
-		fc = fc.ToUnr();
-		FCoords MeshCoords = GetBasisCoords(GMath.UnitCoords);
-		FCoords BoneCoords = GMath.UnitCoords;
-		BoneCoords.XAxis = fc.XAxis.TransformVectorBy(MeshCoords); BoneCoords.XAxis.Normalize();
-		BoneCoords.YAxis = fc.YAxis.TransformVectorBy(MeshCoords); BoneCoords.YAxis.Normalize();
-		BoneCoords.ZAxis = fc.ZAxis.TransformVectorBy(MeshCoords); BoneCoords.ZAxis.Normalize();
-		BoneCoords.Origin = *((FVector*)&c.t); BoneCoords.Origin = BoneCoords.Origin.ToUnr();
-		BoneCoords.Origin = (BoneCoords.Origin - Mac->mDukeOrigin).TransformPointBy(MeshCoords);
-		OutCoords = BoneCoords.Transpose();
-		GetFrameEnd(this);
-		STAT(unclock(GStat.GetMountCoordsCycles));
-		return(1);
-	}
 	
-	if (MountType == MOUNT_MeshSurface)
-	{
-		FVector v[3], origV[3];
-		INT triIndex;
-		FVector triBarys;
-		VCoords3 triBase;
-
-		if (MountName == NAME_None)
-		{
-			// no named mount, use child actor mounting information
-			if (!ChildActor || (ChildActor->MountMeshSurfaceTri < 0) || (ChildActor->MountMeshSurfaceTri >= (INT)Mac->mGeometry->m_Tris.GetCount()))
-			{
-				GetFrameEnd(this);
-				STAT(unclock(GStat.GetMountCoordsCycles));
-				return(0);
-			}
-			triIndex = ChildActor->MountMeshSurfaceTri;
-			triBarys = ChildActor->MountMeshSurfaceBarys;
-			triBase = VCoords3();
-		}
-		else
-		{
-			// find the geometry mount matching the given name
-			CCpjGeoMount* mount = NULL;
-			for (DWORD iMount=0; iMount<Mac->mGeometry->m_Mounts.GetCount(); iMount++)
-			{
-				if (!appStricmp(*MountName, appFromAnsi(Mac->mGeometry->m_Mounts[iMount].name)))
-				{
-					mount = &Mac->mGeometry->m_Mounts[iMount];
-					break;
-				}
-			}
-			if (!mount) // mount not found
-			{
-				GetFrameEnd(this);
-				STAT(unclock(GStat.GetMountCoordsCycles));
-				return(0);
-			}
-			triIndex = mount->triIndex;
-			triBarys = *((FVector*)&mount->triBarys);
-			triBase = mount->baseCoords;
-		}
-
-		// snag cached vertices
-		FLOAT Alpha = 1.f;
-		if (TweenValue < 1.f)
-		{
-			FCacheItem* Item = NULL;
-			QWORD CacheID = MakeCacheID(CID_TweenAnim, Actor, NULL);
-			BYTE* Mem = GCache.Get(CacheID, Item);
-			if (Mem && (*(UDukeMesh**)Mem == Mesh))
-			{
-				Mem += sizeof(UDukeMesh*);
-			#ifdef TWEEN_FIX
-				FLOAT& CachedFrame = *(FLOAT*)Mem;		// JEP
-			#endif
-				Mem += sizeof(FLOAT);
-				FName CachedSeq = *(FName*)Mem; Mem += sizeof(FName);
-				FVector* CachedVerts = (FVector*)Mem;
-				
-			#ifdef TWEEN_FIX
-				Alpha = 1.0 - Actor->AnimFrame / CachedFrame;		// JEP
-			#else
-				Alpha = TweenValue;
-			#endif
-
-				OCpjSequence* Seq = (Mac->mActorChannels[0] && Mac->mActorChannels[0]->IsA(OMacSequenceChannel::GetStaticClass()))
-					? ((OMacSequenceChannel*)Mac->mActorChannels[0])->mSequence : NULL;
-				if ((CachedSeq!=Actor->AnimSequence) || (Alpha<0.f) || (Alpha>1.f))
-					Alpha = 0.f;
-				for (INT j=0;j<3;j++)
-					origV[j] = CachedVerts[Mac->mGeometry->m_Tris[triIndex].edgeRing[j]->tailVertex - &Mac->mGeometry->m_Verts[0]];				
-			}
-			if (Mem)
-				Item->Unlock();
-		}
-
-		if (!Mac->EvaluateTriVerts(triIndex, Alpha, (VVec3*)&origV[0]))
-		{
-			GetFrameEnd(this);
-			STAT(unclock(GStat.GetMountCoordsCycles));
-			return(0);
-		}
-		FVector BackupLoc = Actor->Location;
-		Actor->Location = FVector(0,0,0); // need to change actor origin to avoid floating point error below
-		FCoords MeshCoords = GetBasisCoords(GMath.UnitCoords);
-		Actor->Location = BackupLoc;
-
-		for (INT i=0;i<3;i++)
-			v[i] = (origV[i].ToUnr() - Mac->mDukeOrigin).TransformPointBy(MeshCoords);
-
-		FCoords triCoords;		
-		triCoords.Origin = v[0]*triBarys.X + v[1]*triBarys.Y + v[2]*triBarys.Z;
-		triCoords.ZAxis = (v[2] - v[0]) ^ (v[0] - v[1]);
-		triCoords.ZAxis.Normalize();
-		triCoords.XAxis = v[0] - triCoords.Origin;
-		triCoords.XAxis.Normalize();
-		triCoords.YAxis = triCoords.ZAxis ^ triCoords.XAxis;
-		triCoords.YAxis.Normalize();
-
-		MeshCoords = GetBasisCoords(GMath.UnitCoords); // now that axes are computed, floating point error isn't an issue, recompute for origin
-		for (i=0;i<3;i++)
-			v[i] = (origV[i].ToUnr() - Mac->mDukeOrigin).TransformPointBy(MeshCoords);
-		triCoords.Origin = v[0]*triBarys.X + v[1]*triBarys.Y + v[2]*triBarys.Z;
-
-		FCoords baseCoords(FVector(0,0,0), *((FVector*)&triBase.r.vX), *((FVector*)&triBase.r.vY), *((FVector*)&triBase.r.vZ));
-		baseCoords = baseCoords.ToUnr();
-		
-		triCoords = baseCoords * triCoords.Transpose();
-		
-		FVector ScaleFactor = Mac->mDukeScale;
-		if (ChildActor)
-			ScaleFactor *= ChildActor->DrawScale;
-		triCoords.Origin += ((FVector(triBase.t.x, triBase.t.y, triBase.t.z).ToUnr()).TransformVectorBy(triCoords.Transpose())) * ScaleFactor;
-		
-		OutCoords = triCoords.Transpose();
-
-		GetFrameEnd(this);
-		STAT(unclock(GStat.GetMountCoordsCycles));
-		return(1);
-	}
-
-	GetFrameEnd(this);
-	STAT(unclock(GStat.GetMountCoordsCycles));
 	return(0);
 
 }
@@ -1368,9 +767,10 @@ UBOOL UDukeMeshInstance::LineCheck(FCheckResult& Result, AActor* Owner, FVector 
 	}
 	else
 	{
-		if (!bMeshAccurate)
-			return UPrimitive::LineCheck( Result, Owner, End, Start, FVector(0,0,0), ExtraNodeFlags, bMeshAccurate );
-
+		return UPrimitive::LineCheck(Result, Owner, End, Start, FVector(0, 0, 0), ExtraNodeFlags, bMeshAccurate);
+			
+// jmarshall - we don't need this.
+#if 0
 		Result.MeshBoneName = NAME_None;
 		Result.MeshTri = -1;
 		Result.MeshBarys = FVector(0.33,0.33,0.34);
@@ -1382,8 +782,8 @@ UBOOL UDukeMeshInstance::LineCheck(FCheckResult& Result, AActor* Owner, FVector 
 
 		// get vertices and triangles
 		FMemMark Mark(GMem);
-		SMacTri* TempTris = New<SMacTri>(GMem, Mac->mGeometry->m_Tris.GetCount());
-		VVec3* TempVerts = New<VVec3>(GMem, Mac->mGeometry->m_Verts.GetCount());
+		SMacTri* TempTris = New<SMacTri>(GMem, Mac->GetNumTris());
+		VVec3* TempVerts = New<VVec3>(GMem, Mac->GetNumVertexes());
 		INT NumTris = Mac->EvaluateTris(1.f, TempTris);
 		mesh_GetFrameNoTransform = 1;
 		INT NumVerts = GetFrame((FVector*)TempVerts, NULL, sizeof(VVec3), GMath.UnitCoords, 1.f);
@@ -1438,6 +838,8 @@ UBOOL UDukeMeshInstance::LineCheck(FCheckResult& Result, AActor* Owner, FVector 
 
 		Mark.Pop();
 		return(TraceRes==0);
+#endif
+// jmarshall end
 	}
 }
 
@@ -1563,7 +965,7 @@ void UMeshInstance::execBoneGetName( FFrame& Stack, RESULT_DECL )
 		*(FName*)Result = NAME_None;
 		return;
 	}
-	*(FName*)Result = FName(appFromAnsi(*bone->mSklBone->name));
+	*(FName*)Result = FName(*bone->mSklBone->name);
 
 }
 IMPLEMENT_FUNCTION( UMeshInstance, INDEX_NONE, execBoneGetName );
@@ -1906,7 +1308,7 @@ void AMeshDecal::execBuildDecal( FFrame& Stack, RESULT_DECL )
 	P_GET_FLOAT(InDimU);
 	P_GET_FLOAT(InDimV);
 	P_FINISH;
-
+#if 0 // todo decals.
 	Texture = NULL;
 	Actor = NULL;
 	Mesh = NULL;
@@ -2002,7 +1404,7 @@ void AMeshDecal::execBuildDecal( FFrame& Stack, RESULT_DECL )
 	*(INT*)Result = Tris.Num();
 	
 	Mark.Pop();
-	
+#endif
 }
 //IMPLEMENT_FUNCTION( AMeshDecal, INDEX_NONE, execBuildDecal );
 

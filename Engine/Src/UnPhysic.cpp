@@ -111,19 +111,19 @@ void AActor::execForcedGetFrame( FFrame& Stack, RESULT_DECL )
 {
 	P_FINISH;
 
-	if ( Mesh == NULL )
-		return;
-
-	UDukeMeshInstance* MeshInst = Cast<UDukeMeshInstance>( GetMeshInstance() );
-	if ( MeshInst == NULL )
-		return;
-
-	FMemMark Mark(GMem);
-	static SMacTri TempTris[4096];
-	MeshInst->Mac->EvaluateTris( 1.f, TempTris );
-	VVec3* TempVerts = New<VVec3>(GMem, MeshInst->Mac->mGeometry->m_Verts.GetCount());
-	INT NumVerts = MeshInst->GetFrame((FVector*)TempVerts, NULL, sizeof(VVec3), GMath.UnitCoords, 1.f);
-	Mark.Pop();
+	//if ( Mesh == NULL )
+	//	return;
+	//
+	//UDukeMeshInstance* MeshInst = Cast<UDukeMeshInstance>( GetMeshInstance() );
+	//if ( MeshInst == NULL )
+	//	return;
+	//
+	//FMemMark Mark(GMem);
+	//static SMacTri TempTris[4096];
+	//MeshInst->Mac->EvaluateTris( 1.f, TempTris );
+	//VVec3* TempVerts = New<VVec3>(GMem, MeshInst->Mac->mGeometry->m_Verts.GetCount());
+	//INT NumVerts = MeshInst->GetFrame((FVector*)TempVerts, NULL, sizeof(VVec3), GMath.UnitCoords, 1.f);
+	//Mark.Pop();
 
 //	FVector* TempVerts = New<FVector>(GMem, MeshInst->Mac->mGeometry->m_Verts.GetCount());
 //	MeshInst->GetFrame( TempVerts, NULL, sizeof(FVector), GMath.UnitCoords, 1.f );
@@ -3274,7 +3274,6 @@ void AActor::physTrailer(FLOAT deltaTime)
 }
 
 #include "DnMeshPrivate.h"
-#include "..\..\Cannibal\CannibalUnr.h"
 
 void APawn::physRope
     (
@@ -3283,6 +3282,8 @@ void APawn::physRope
     )
 
 {
+// jmarshall - physics rope
+#if 0
     APlayerPawn *PlayerPawn;
 
     if ( Iterations > 8 )
@@ -3485,6 +3486,7 @@ void APawn::physRope
             physRope( deltaSeconds, ++Iterations );
         }
     }
+#endif
 }
 
 void APawn::physJetpack( FLOAT DeltaTime )

@@ -103,7 +103,7 @@ add_executable(DukeEd WIN32
 )
 
 target_compile_definitions(DukeEd PRIVATE _UNICODE UNICODE)
-target_link_libraries(DukeEd PRIVATE Engine Editor Cannibal D3DDrv OpenALAudio comctl32 winmm)
+target_link_libraries(DukeEd PRIVATE Engine Editor D3DDrv OpenALAudio comctl32 winmm)
 target_include_directories(DukeEd PRIVATE
     Inc
     Src

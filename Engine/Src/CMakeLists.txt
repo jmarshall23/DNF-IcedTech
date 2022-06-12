@@ -84,7 +84,6 @@ add_library(Engine SHARED
     DnCinematic.cpp
     dnclient.c
     DnMesh.cpp
-    DnMeshExport.cpp
     dnParentalLock.cpp
     dnPlayerProfile.cpp
     dnSaveLoad.cpp
@@ -249,7 +248,7 @@ add_library(Engine SHARED
 
 target_link_directories(Engine PRIVATE ../Lib)
 target_link_options(Engine PRIVATE "/NODEFAULTLIB:LIBC")
-target_link_libraries(Engine PRIVATE Cannibal spchwrap comctl32 dxguid winmm s3tc)
+target_link_libraries(Engine PRIVATE spchwrap comctl32 dxguid winmm s3tc)
 
 target_compile_definitions(Engine PRIVATE
     "_UNICODE" "UNICODE"
