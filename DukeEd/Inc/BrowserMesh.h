@@ -359,6 +359,14 @@ class WSequenceFrame : public WDialog
 
 		return MeshCombo.GetString( MeshCombo.GetCurrent() );
 	}
+
+// jmarshall
+	void SetIndex(int index)
+	{
+		MeshCombo.SetCurrent(index);
+	}
+// jmarshall end
+
 	FName GetCurrentAnimSequence()
 	{
 		if ( !MeshViewport || !MeshViewport->Actor || !MeshViewport->MiscRes )
@@ -738,29 +746,61 @@ class WBrowserMesh : public WBrowser
 // jmarshall
 			case IDMM_EXPORT_MESH:
 				{
-					OPENFILENAMEA ofn;
-					char File[8192] = "\0";
 					FString Package = SequenceFrame->PackageCombo.GetString(SequenceFrame->PackageCombo.GetCurrent());
+					FString Group = SequenceFrame->GroupCombo.GetString(SequenceFrame->GroupCombo.GetCurrent());
 
-					::sprintf(File, "%s.obj", TCHAR_TO_ANSI(*Package));
+					FStringOutputDevice GetPropResult = FStringOutputDevice();
+					TCHAR QueryString[256];
+					appSprintf(QueryString, TEXT("Query Type=Mesh Package=\"%s\" GROUP=\"%s\""), *Package, *Group);
+					GEditor->Get(TEXT("OBJ"), QueryString, GetPropResult);
 
-					ZeroMemory(&ofn, sizeof(OPENFILENAMEA));
-					ofn.lStructSize = sizeof(OPENFILENAMEA);
-					ofn.hwndOwner = hWnd;
-					ofn.lpstrFile = File;
-					ofn.nMaxFile = sizeof(char) * 8192;
-					ofn.lpstrFilter = "Wavefront OBJ (*.obj)\0*.obj\0All Files\0*.*\0\0";
-					ofn.lpstrInitialDir = appToAnsi(*(GLastDir[eLASTDIR_DMX]));
-					ofn.lpstrDefExt = "obj";
-					ofn.lpstrTitle = "Export mesh to OBJs";
-					ofn.Flags = OFN_HIDEREADONLY | OFN_NOCHANGEDIR | OFN_OVERWRITEPROMPT;
+					TArray<FString> StringArray;
+					ParseStringToArray(TEXT(" "), *GetPropResult, &StringArray);										
 
-					if (GetSaveFileNameA(&ofn))
+					for (INT x = 0; x < StringArray.Num(); x++)
 					{
+						static TCHAR meshFilename[2048];
+						static TCHAR animFilename[2048];
+
+						SequenceFrame->SetIndex(x);
+						RefreshViewport();
+
 						UDukeMesh* DukeMesh = (UDukeMesh*)MeshViewport->MiscRes;
 						UDukeMeshInstance* MeshInst = (UDukeMeshInstance*)DukeMesh->GetInstance(MeshViewport->Actor);
-						MeshInst->ExportToOBJ(File);
-					}					
+
+						FString meshName = SequenceFrame->GetCurrentMeshName();
+
+						GWarn->BeginSlowTask(*meshName, 1, 0);
+
+						if (MeshInst->Mac->mSkeleton != nullptr)
+						{
+							wsprintf(meshFilename, TEXT("D:/dnf/meshes/models/characters/%s"), *meshName);
+							_wmkdir(meshFilename);
+
+							wsprintf(meshFilename, TEXT("D:/dnf/meshes/models/characters/%s/%s.md5mesh"), *meshName, *meshName);
+							wsprintf(animFilename, TEXT("D:/dnf/meshes/models/characters/%s/%s.md5anim"), *meshName, *meshName);
+
+							char meshFilenameTemp[2048];
+							char animFilenameTemp[2048];
+							wcstombs(meshFilenameTemp, meshFilename, wcslen(meshFilename) + 1);
+							wcstombs(animFilenameTemp, animFilename, wcslen(animFilename) + 1);
+
+
+							MeshInst->ExportToMD5Mesh(meshFilenameTemp);
+							MeshInst->ExportSequences(animFilenameTemp);
+						}
+						else
+						{
+							//wsprintf(meshFilename, TEXT("../meshes/models/characters/%s/%s.obj"), *meshName, *meshName);
+							//
+							//char meshFilenameTemp[2048];
+							//wcstombs(meshFilenameTemp, meshFilename, wcslen(meshFilename) + 1);
+							//
+							//MeshInst->ExportToOBJ(meshFilenameTemp);
+						}
+
+						GWarn->EndSlowTask();
+					}
 				}
 				break;
 			case IDMM_EXPORT_SKELMESH:

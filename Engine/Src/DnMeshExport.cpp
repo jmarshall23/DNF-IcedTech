@@ -501,18 +501,9 @@ void UDukeMeshInstance::GatherExportJoints(TArray< FDukeExportJoint>& joints)
 		sprintf(exportJoint.boneName, bone->mSklBone->name.Str(), bone->mSklBone->name.Len());
 		exportJoint.parent = -1;
 
-		if (bone->mSklBone->parentBone != nullptr)
+		if (bone->mParent != nullptr)
 		{
-			for (int d = 0; d < Mac->mActorBones.GetCount(); d++)
-			{
-				if (bone->mSklBone->parentBone == Mac->mActorBones[d].mSklBone)
-				{
-					exportJoint.parent = d;
-					break;
-				}
-			}
-
-			assert(exportJoint.parent != -1);
+			exportJoint.parent = bone->mParent - &Mac->mActorBones[0];
 		}
 
 		VCoords3 v = bone->GetCoords(false);

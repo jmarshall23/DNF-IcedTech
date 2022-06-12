@@ -844,7 +844,7 @@ BEGIN
         MENUITEM "Save",                        IDMN_MB_SAVE
         MENUITEM SEPARATOR
         MENUITEM "&Refresh View",               IDMN_REFRESH
-        MENUITEM "&Export Mesh",                IDMM_EXPORT_MESH
+        MENUITEM "&Export All Meshes",                IDMM_EXPORT_MESH
         MENUITEM "&Export Skel Mesh",           IDMM_EXPORT_SKELMESH
         MENUITEM "&Export Sequences",           IDMM_EXPORT_SEQUENCES
     END
