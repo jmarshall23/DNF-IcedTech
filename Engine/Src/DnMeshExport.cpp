@@ -790,7 +790,7 @@ void UDukeMeshInstance::ExportToMD3(const char* fileName)
 			memcpy(&xyz, &verts[index], sizeof(VVec3));
 			memcpy(&uv, TempTris[i].texUV[d], sizeof(VVec2));
 
-			uv.Y = 1.0 - uv.Y;
+			//uv.Y = 1.0 - uv.Y;
 
 			mesh->vertexes.AddItem(xyz);
 			mesh->uv.AddItem(uv);

@@ -772,7 +772,7 @@ class WBrowserMesh : public WBrowser
 
 						GWarn->BeginSlowTask(*meshName, 1, 0);
 
-						wchar_t* package = TEXT("dukeitems");
+						wchar_t* package = TEXT("vehicles");
 
 						wsprintf(meshFilename, TEXT("D:/dnf/meshes/models/%s/%s"), package, *meshName);
 						_wmkdir(meshFilename);
@@ -789,7 +789,7 @@ class WBrowserMesh : public WBrowser
 
 
 							MeshInst->ExportToMD5Mesh(meshFilenameTemp);
-							//MeshInst->ExportSequences(animFilenameTemp);
+							MeshInst->ExportSequences(animFilenameTemp);
 						}
 						else
 						{
