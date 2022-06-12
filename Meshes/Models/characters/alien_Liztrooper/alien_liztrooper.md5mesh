@@ -38,7 +38,7 @@ joints {
 	"FOOT_R" 30 ( -4.819849 -28.866751 48.250057 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:\dnf\Meshes\Models\characters\alien_Liztrooper\alien_liztrooper_0.tga"
+	shader "D:/dnf/meshes/models/characters/alien_Liztrooper/alien_Liztrooper_0.tga"
 	numverts 408
 
 	vert 0 ( 0.726562 0.464844 ) 0 1
@@ -1410,7 +1410,7 @@ mesh {
 	weight 544 2 0.800000 ( 8.707735 6.674896 -7.698270 )
 	weight 545 3 0.200000 ( -2.667290 -0.032887 -7.773620 )
 }mesh {
-	shader "D:\dnf\Meshes\Models\characters\alien_Liztrooper\alien_liztrooper_1.tga"
+	shader "D:/dnf/meshes/models/characters/alien_Liztrooper/alien_Liztrooper_1.tga"
 	numverts 366
 
 	vert 0 ( 0.191406 0.566406 ) 0 2
@@ -2740,7 +2740,7 @@ mesh {
 	weight 586 2 0.800000 ( 15.100124 12.427696 -0.005080 )
 	weight 587 3 0.200000 ( 3.725139 5.719869 -0.080430 )
 }mesh {
-	shader "D:\dnf\Meshes\Models\characters\alien_Liztrooper\alien_liztrooper_2.tga"
+	shader "D:/dnf/meshes/models/characters/alien_Liztrooper/alien_Liztrooper_2.tga"
 	numverts 354
 
 	vert 0 ( 0.007812 0.058594 ) 0 2
@@ -3923,7 +3923,7 @@ mesh {
 	weight 463 25 0.250000 ( 10.364665 -7.255901 2.011165 )
 	weight 464 26 0.750000 ( 4.340720 -2.745400 1.961320 )
 }mesh {
-	shader "D:\dnf\Meshes\Models\characters\alien_Liztrooper\alien_liztrooper_3.tga"
+	shader "D:/dnf/meshes/models/characters/alien_Liztrooper/alien_Liztrooper_3.tga"
 	numverts 354
 
 	vert 0 ( 0.859375 0.171875 ) 0 1
@@ -5072,7 +5072,7 @@ mesh {
 	weight 429 22 1.000000 ( -0.008647 6.283705 -9.463796 )
 	weight 430 22 1.000000 ( -0.093394 2.824806 -11.389798 )
 }mesh {
-	shader "D:\dnf\Meshes\Models\characters\alien_Liztrooper\alien_liztrooper_4.tga"
+	shader "D:/dnf/meshes/models/characters/alien_Liztrooper/alien_Liztrooper_4.tga"
 	numverts 750
 
 	vert 0 ( 0.781250 0.644531 ) 0 2
@@ -7712,7 +7712,7 @@ mesh {
 	weight 1128 24 1.000000 ( 2.092103 -2.801603 -3.120202 )
 	weight 1129 24 1.000000 ( 1.592233 -4.745602 -5.897903 )
 }mesh {
-	shader "D:\dnf\Meshes\Models\characters\alien_Liztrooper\alien_liztrooper_5.tga"
+	shader "D:/dnf/meshes/models/characters/alien_Liztrooper/alien_Liztrooper_5.tga"
 	numverts 411
 
 	vert 0 ( 0.175781 0.304688 ) 0 1

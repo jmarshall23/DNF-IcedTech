@@ -47,7 +47,7 @@ joints {
 	"FOOT_R" 39 ( -8.543240 -25.085732 44.800247 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:\dnf\Meshes\Models\characters\pigcop\pigcop_0.tga"
+	shader "D:/dnf/meshes/models/characters/PigCop/PigCop_0.tga"
 	numverts 357
 
 	vert 0 ( 0.679688 0.652344 ) 0 2
@@ -1448,7 +1448,7 @@ mesh {
 	weight 675 18 1.000000 ( 2.479954 -3.381147 -5.315221 )
 	weight 676 2 1.000000 ( 0.091257 14.740097 -10.039717 )
 }mesh {
-	shader "D:\dnf\Meshes\Models\characters\pigcop\pigcop_1.tga"
+	shader "D:/dnf/meshes/models/characters/PigCop/PigCop_1.tga"
 	numverts 1344
 
 	vert 0 ( 0.113281 0.257812 ) 0 1
@@ -6041,7 +6041,7 @@ mesh {
 	weight 1893 3 0.581217 ( 9.507399 -5.923000 3.225230 )
 	weight 1894 4 0.418783 ( -1.012001 -2.508499 2.212690 )
 }mesh {
-	shader "D:\dnf\Meshes\Models\characters\pigcop\pigcop_2.tga"
+	shader "D:/dnf/meshes/models/characters/PigCop/PigCop_2.tga"
 	numverts 510
 
 	vert 0 ( 0.414062 0.218750 ) 0 1
@@ -7775,7 +7775,7 @@ mesh {
 	weight 702 26 0.200000 ( -2.220020 2.641524 0.267474 )
 	weight 703 26 1.000000 ( 0.486123 -0.877245 0.584530 )
 }mesh {
-	shader "D:\dnf\Meshes\Models\characters\pigcop\pigcop_3.tga"
+	shader "D:/dnf/meshes/models/characters/PigCop/PigCop_3.tga"
 	numverts 471
 
 	vert 0 ( 0.753906 0.605469 ) 0 2

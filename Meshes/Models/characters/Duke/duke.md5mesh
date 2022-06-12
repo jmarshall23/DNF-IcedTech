@@ -49,7 +49,7 @@ joints {
 	"FOOT_R" 41 ( -4.161160 -28.866749 49.619804 ) ( 0.000000 0.000000 0.000000 )
 }
 mesh {
-	shader "D:\dnf\Meshes\Models\characters\Duke\duke_0.tga"
+	shader "D:/dnf/meshes/models/characters/Duke/Duke_0.tga"
 	numverts 1476
 
 	vert 0 ( 0.746094 0.117188 ) 0 1
@@ -5375,7 +5375,7 @@ mesh {
 	weight 2362 2 0.900000 ( -7.269675 10.535698 1.840630 )
 	weight 2363 16 0.100000 ( 2.650320 2.983821 1.751820 )
 }mesh {
-	shader "D:\dnf\Meshes\Models\characters\Duke\duke_1.tga"
+	shader "D:/dnf/meshes/models/characters/Duke/Duke_1.tga"
 	numverts 690
 
 	vert 0 ( 0.308594 0.046875 ) 0 1
@@ -7831,7 +7831,7 @@ mesh {
 	weight 1064 1 0.314079 ( -0.076812 -3.028702 -7.921535 )
 	weight 1065 36 0.685921 ( -0.004187 -1.230103 -8.090178 )
 }mesh {
-	shader "D:\dnf\Meshes\Models\characters\Duke\duke_2.tga"
+	shader "D:/dnf/meshes/models/characters/Duke/Duke_2.tga"
 	numverts 606
 
 	vert 0 ( 0.832031 0.164062 ) 0 1
