@@ -2216,7 +2216,7 @@ UClass* UObject::StaticLoadClass( UClass* BaseClass, UObject* InOuter, const TCH
 //
 // Load all objects in a package.
 //
-UObject* UObject::LoadPackage( UObject* InOuter, const TCHAR* Filename, DWORD LoadFlags )
+UObject* UObject::LoadPackage( UObject* InOuter, const TCHAR* Filename, DWORD LoadFlags, bool canError )
 {
 	UObject* Result;
 
@@ -2236,7 +2236,12 @@ UObject* UObject::LoadPackage( UObject* InOuter, const TCHAR* Filename, DWORD Lo
 	catch( const TCHAR* Error )
 	{
 		EndLoad();
-		SafeLoadError( LoadFlags, Error, LocalizeError("FailedLoadPackage"), Error );
+
+		if (!canError)
+		{
+			SafeLoadError(LoadFlags, Error, LocalizeError("FailedLoadPackage"), Error);
+		}
+		
 		Result = NULL;
 	}
 	return Result;

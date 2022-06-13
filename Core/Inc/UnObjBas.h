@@ -534,7 +534,7 @@ public:
 	static void StaticExit();
 	static UBOOL StaticExec( const TCHAR* Cmd, FOutputDevice& Ar=*GLog );
 	static void StaticTick();
-	static UObject* LoadPackage( UObject* InOuter, const TCHAR* Filename, DWORD LoadFlags );
+	static UObject* LoadPackage( UObject* InOuter, const TCHAR* Filename, DWORD LoadFlags, bool canError = false );
 	static UBOOL SavePackage( UObject* InOuter, UObject* Base, DWORD TopLevelFlags, const TCHAR* Filename, FOutputDevice* Error=GError, ULinkerLoad* Conform=NULL );
 	static void CollectGarbage( DWORD KeepFlags );
 	static void SerializeRootSet( FArchive& Ar, DWORD KeepFlags, DWORD RequiredFlags );

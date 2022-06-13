@@ -25,6 +25,8 @@ FString GMapExt;
 static UTexture* CurrentDetailTexture = 0;
 #endif
 
+EDITOR_API UObject* lastLoadedPkg = nullptr;
+
 void polygonDeleteMarkers()
 {
 	if( !GEditor || !GEditor->Level ) return;
@@ -372,6 +374,9 @@ UBOOL UEditorEngine::SafeExec( const TCHAR* InStr, FOutputDevice& Ar )
 			Pkg = LoadPackage( Pkg, TempFname, 0 );
 			if( *PackageName )
 				ResetLoaders( Pkg, 0, 1 );
+
+			lastLoadedPkg = Pkg;
+
 			GCache.Flush();
 			if( !ParentContext )
 			{

@@ -310,6 +310,8 @@ class EDITOR_API UTextureExporterTGA : public UExporter
 	UBOOL ExportBinary( UObject* Object, const TCHAR* Type, FArchive& Ar, FFeedbackContext* Warn );
 };
 
+extern EDITOR_API UObject* lastLoadedPkg;
+
 /*-----------------------------------------------------------------------------
 	The End.
 -----------------------------------------------------------------------------*/

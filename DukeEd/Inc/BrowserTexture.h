@@ -13,6 +13,11 @@
 #include "DlgTexUsage.h"
 #define WM_MOUSEWHEEL                   0x020A
 
+#define _XKEYCHECK_H
+#define __PLACEMENT_NEW_INLINE
+#include <string>
+#include <vector>
+
 __declspec(dllimport) INT GLastScroll;
 
 extern void Query( ULevel* Level, const TCHAR* Item, FString* pOutput );
@@ -354,6 +359,59 @@ class WBrowserTexture : public WBrowser
 	INT iZoom, iScroll;
 
 	HMENU BrowserTextureMenu;
+	/* Returns a list of files in a directory (except the ones that begin with a dot) */
+
+	void GetFilesInDirectory(const std::string& directory, std::vector<std::string>& out)
+	{
+#ifdef _WINDOWS
+		HANDLE dir;
+		WIN32_FIND_DATAA file_data;
+
+		if ((dir = FindFirstFileA((directory + "/*").c_str(), &file_data)) == INVALID_HANDLE_VALUE)
+			return; /* No files found */
+
+		do {
+			const std::string file_name = file_data.cFileName;
+			const std::string full_file_name = directory + "/" + file_name;
+			const bool is_directory = (file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+
+			if (file_name[0] == '.')
+				continue;
+
+			if (is_directory)
+				continue;
+
+			out.push_back(full_file_name);
+		} while (FindNextFileA(dir, &file_data));
+
+		FindClose(dir);
+#else
+		DIR* dir;
+		class dirent* ent;
+		class stat st;
+
+		dir = opendir(directory);
+		while ((ent = readdir(dir)) != NULL) {
+			const string file_name = ent->d_name;
+			const string full_file_name = directory + "/" + file_name;
+
+			if (file_name[0] == '.')
+				continue;
+
+			if (stat(full_file_name.c_str(), &st) == -1)
+				continue;
+
+			const bool is_directory = (st.st_mode & S_IFDIR) != 0;
+
+			if (is_directory)
+				continue;
+
+			out.push_back(full_file_name);
+		}
+		closedir(dir);
+#endif
+	} // GetFilesInDirectory
+
 
 	// Structors.
 	WBrowserTexture( FName InPersistentName, WWindow* InOwnerWindow, HWND InEditorFrame )
@@ -504,6 +562,65 @@ class WBrowserTexture : public WBrowser
 
 		WBrowser::OnDestroy();
 	}
+
+	void OpenTexturePackage(char* File)
+	{
+
+		INT iNULLs = FormatFilenames(File);
+
+		TArray<FString> StringArray;
+		ParseStringToArray(TEXT("|"), appFromAnsi(File), &StringArray);
+
+		INT iStart = 0;
+		FString Prefix = TEXT("\0");
+
+		if (iNULLs)
+		{
+			iStart = 1;
+			Prefix = *(StringArray(0));
+			Prefix += TEXT("\\");
+		}
+
+		if (StringArray.Num() > 0)
+		{
+			if (StringArray.Num() == 1)
+			{
+				SavePkgName = *(StringArray(0));
+				SavePkgName = SavePkgName.Right(SavePkgName.Len() - (SavePkgName.Left(SavePkgName.InStr(TEXT("\\"), 1)).Len() + 1));
+			}
+			else
+				SavePkgName = *(StringArray(1));
+			SavePkgName = SavePkgName.Left(SavePkgName.InStr(TEXT(".")));
+		}
+
+		if (StringArray.Num() == 1)
+			GLastDir[eLASTDIR_DTX] = StringArray(0).Left(StringArray(0).InStr(TEXT("\\"), 1));
+		else
+			GLastDir[eLASTDIR_DTX] = StringArray(0);
+
+		GWarn->BeginSlowTask(TEXT(""), 1, 0);
+
+		for (INT x = iStart; x < StringArray.Num(); x++)
+		{
+			GWarn->StatusUpdatef(x, StringArray.Num(), TEXT("Loading %s"), *(StringArray(x)));
+
+			TCHAR l_chCmd[512];
+			appSprintf(l_chCmd, TEXT("OBJ LOAD FILE=\"%s%s\""), *Prefix, *(StringArray(x)));
+			GEditor->Exec(l_chCmd);
+
+			mrulist->AddItem(*(StringArray(x)));
+			if (GBrowserMaster->GetCurrent() == BrowserID)
+				mrulist->AddToMenu(hWnd, GetMenu(IsDocked() ? OwnerWindow->hWnd : hWnd));
+		}
+
+		GWarn->EndSlowTask();
+
+		GBrowserMaster->RefreshAll();
+		pComboPackage->SetCurrent(pComboPackage->FindStringExact(*SavePkgName));
+		RefreshGroups();
+		RefreshTextureList();
+	}
+
 	virtual void UpdateMenu()
 	{
 		HMENU menu = GetMenu( IsDocked() ? OwnerWindow->hWnd : hWnd );
@@ -737,61 +854,9 @@ class WBrowserTexture : public WBrowser
 					ofn.lpstrTitle = "Open Texture Package";
 					ofn.Flags = OFN_HIDEREADONLY | OFN_NOCHANGEDIR | OFN_ALLOWMULTISELECT | OFN_EXPLORER;
 
-					if( GetOpenFileNameA(&ofn) )
+					if (GetOpenFileNameA(&ofn))
 					{
-						INT iNULLs = FormatFilenames( File );
-		
-						TArray<FString> StringArray;
-						ParseStringToArray( TEXT("|"), appFromAnsi( File ), &StringArray );
-
-						INT iStart = 0;
-						FString Prefix = TEXT("\0");
-
-						if( iNULLs )
-						{
-							iStart = 1;
-							Prefix = *(StringArray(0));
-							Prefix += TEXT("\\");
-						}
-
-						if( StringArray.Num() > 0 )
-						{
-							if( StringArray.Num() == 1 )
-							{
-								SavePkgName = *(StringArray(0));
-								SavePkgName = SavePkgName.Right( SavePkgName.Len() - (SavePkgName.Left( SavePkgName.InStr(TEXT("\\"), 1)).Len() + 1 ));
-							}
-							else
-								SavePkgName = *(StringArray(1));
-							SavePkgName = SavePkgName.Left( SavePkgName.InStr(TEXT(".")) );
-						}
-
-						if( StringArray.Num() == 1 )
-							GLastDir[eLASTDIR_DTX] = StringArray(0).Left( StringArray(0).InStr( TEXT("\\"), 1 ) );
-						else
-							GLastDir[eLASTDIR_DTX] = StringArray(0);
-
-						GWarn->BeginSlowTask( TEXT(""), 1, 0 );
-
-						for( INT x = iStart ; x < StringArray.Num() ; x++ )
-						{
-							GWarn->StatusUpdatef( x, StringArray.Num(), TEXT("Loading %s"), *(StringArray(x)) );
-
-							TCHAR l_chCmd[512];
-							appSprintf( l_chCmd, TEXT("OBJ LOAD FILE=\"%s%s\""), *Prefix, *(StringArray(x)) );
-							GEditor->Exec( l_chCmd );
-
-							mrulist->AddItem( *(StringArray(x)) );
-							if( GBrowserMaster->GetCurrent()==BrowserID )
-								mrulist->AddToMenu( hWnd, GetMenu( IsDocked() ? OwnerWindow->hWnd : hWnd ) );
-						}
-
-						GWarn->EndSlowTask();
-
-						GBrowserMaster->RefreshAll();
-						pComboPackage->SetCurrent( pComboPackage->FindStringExact( *SavePkgName ) );
-						RefreshGroups();
-						RefreshTextureList();
+						OpenTexturePackage(File);
 					}
 
 					GFileManager->SetDefaultDirectory(appBaseDir());
@@ -940,18 +1005,12 @@ class WBrowserTexture : public WBrowser
 				break;
 
 			case IDMN_TB_EXPORT_PCX:
-				{
-					if( !GEditor->CurrentTexture )
-					{
-						appMsgf( TEXT("Select a texture first.") );
-						break;
-					}
-
+			{										
 					OPENFILENAMEA ofn;
 					char File[8192] = "\0";
-					FString Name = GEditor->CurrentTexture->GetName();
+					//FString Name = GEditor->CurrentTexture->GetName();
 
-					::sprintf( File, "%s", TCHAR_TO_ANSI( *Name ) );
+					::sprintf(File, "name_doesnt_matter");
 
 					ZeroMemory(&ofn, sizeof(OPENFILENAMEA));
 					ofn.lStructSize = sizeof(OPENFILENAMEA);
@@ -960,43 +1019,71 @@ class WBrowserTexture : public WBrowser
 					ofn.nMaxFile = sizeof(char) * 8192;
 					ofn.nFilterIndex = 1;
 					ofn.lpstrTitle = "Export Texture";
-					ofn.lpstrInitialDir = appToAnsi( *(GLastDir[eLASTDIR_PCX]) );
+					ofn.lpstrInitialDir = appToAnsi(*(GLastDir[eLASTDIR_PCX]));
 					ofn.Flags = OFN_HIDEREADONLY | OFN_NOCHANGEDIR | OFN_OVERWRITEPROMPT;
-
-					//!! ugly + retarded
-					switch( GEditor->CurrentTexture->Format )
-					{
-					case TEXF_P8:
-						ofn.lpstrFilter = "8-bit Palettized BMP (*.bmp)\0*.bmp\0""8-bit Palettized PCX (*.pcx)\0*.pcx\0\0";
-						ofn.lpstrDefExt = "bmp";
-						break;
-					case TEXF_G16:
-						ofn.lpstrFilter = "16-bit Grayscale BMP (*.bmp)\0*.bmp\0";
-						ofn.lpstrDefExt = "bmp";
-						break;
-					case TEXF_RGBA8:
-						ofn.lpstrFilter = "32-bit Targa (*.tga)\0*.tga\0""24-bit BMP (*.bmp)\0*.bmp\0""24-bit PCX (*.pcx)\0*.pcx\0\0";
-						ofn.lpstrDefExt = "tga";
-						break;
-					}
+					ofn.lpstrFilter = "32-bit Targa (*.tga)\0*.tga\0""24-bit BMP (*.bmp)\0*.bmp\0""24-bit PCX (*.pcx)\0*.pcx\0\0";
+					ofn.lpstrDefExt = "tga";
 
 					// Display the Open dialog box. 
 					//
-					if( GetSaveFileNameA(&ofn) )
+					if (GetSaveFileNameA(&ofn))
 					{
-						TCHAR l_chCmd[512];
+						char dir[512];
+						char drive[512];
+						_splitpath(File, drive, dir, nullptr, nullptr);
 
-						appSprintf( l_chCmd, TEXT("OBJ EXPORT TYPE=TEXTURE NAME=\"%s\" FILE=\"%s\""),
-							*Name, appFromAnsi( File ) );
-						GEditor->Exec( l_chCmd );
+						{
+							std::vector<std::string> packageNames;
+							GetFilesInDirectory("E:/dnf-art-export/Textures", packageNames);
 
-						FString S = appFromAnsi( File );
-						GLastDir[eLASTDIR_PCX] = S.Left( S.InStr( TEXT("\\"), 1 ) );
-					}
+							for (int i = 0; i < packageNames.size(); i++)
+							{
+								char package_file_name[512];
 
-					GFileManager->SetDefaultDirectory(appBaseDir());
+								wchar_t packageFileNameTemp2[512];
+
+								MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, packageNames[i].c_str(), -1, packageFileNameTemp2, 512);
+
+								UObject* Pkg = UObject::LoadPackage(NULL, packageFileNameTemp2, LOAD_NoFail, true);
+								if (Pkg == nullptr)
+									continue;
+
+								_splitpath(packageNames[i].c_str(), nullptr, nullptr, package_file_name, nullptr);
+
+								{
+									char tempdir[512];
+									sprintf(tempdir, "%s%s%s", drive, dir, package_file_name);
+									mkdir(tempdir);
+								}
+
+								FMemMark Mark(GMem);
+								enum { MAX = 16384 };
+								UTexture** List = new(GMem, MAX)UTexture*;
+
+								// Make a short list of filtered textures.
+								INT n = 0;
+								for (TObjectIterator<UTexture> It; It && n < MAX; ++It)
+								{
+									if (It->IsIn(Pkg))
+									{
+										FString TexName = It->GetName();
+										char tempf[512];
+
+										sprintf(tempf, "%s%s%s/%s", drive, dir, package_file_name, appToAnsi(*TexName));
+
+										UDukeMeshInstance::ExportTexture(*It, tempf);
+
+										List[n++] = *It;
+									}
+
+								}
+
+								GFileManager->SetDefaultDirectory(appBaseDir());
+							}
+						}						
+					}					
 				}
-				break;
+				break; 
 
 			default:
 				WBrowser::OnCommand(Command);
@@ -1087,14 +1174,14 @@ class WBrowserTexture : public WBrowser
 		}
 		else
 		{
-			appSprintf( l_chCmd, TEXT("CAMERA UPDATE FLAGS=%d MISC1=%d MISC2=%d REN=%d NAME=TextureBrowser PACKAGE=\"%s\" GROUP=\"%s\" NAMEFILTER=\"%s\""),
-				SHOW_StandardView | SHOW_NoButtons | SHOW_ChildWindow,
-				iZoom,
-				iScroll,
-				REN_TexBrowser,
-				*Package,
-				*Group,
-				*NameFilter);
+		appSprintf(l_chCmd, TEXT("CAMERA UPDATE FLAGS=%d MISC1=%d MISC2=%d REN=%d NAME=TextureBrowser PACKAGE=\"%s\" GROUP=\"%s\" NAMEFILTER=\"%s\""),
+			SHOW_StandardView | SHOW_NoButtons | SHOW_ChildWindow,
+			iZoom,
+			iScroll,
+			REN_TexBrowser,
+			*Package,
+			*Group,
+			*NameFilter);
 		}
 		GEditor->Exec( l_chCmd );
 
