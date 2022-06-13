@@ -259,11 +259,6 @@ INT __forceinline Compare( const FTransform* A, const FTransform* B )
 	return appRound(B->Point.Z - A->Point.Z);
 }
 
-struct FMeshTriSortDuke
-{
-	SMacTri* Tri;
-	INT Key;
-};
 
 EXECVAR_HELP(UBOOL, mesh_showbones, 0, "Display bone bounding boxes");
 EXECVAR_HELP(FLOAT, mesh_wpndrawscale, 0.2, "Weapon draw scale");
@@ -291,117 +286,6 @@ EXECFUNC(Lod)
 }
 
 #pragma warning(disable: 4505) // unreferenced local function
-
-/*
-	Color conversion convenience functions.
-	Components in both RGB and HSV are in the [0,1] range.
-
-	Cut&pasted directly from VecMain.h, and made static
-	since the inlining of the VEC_RGBToHSV and VEC_HSVToRGB
-	functions is causing havoc with the global
-	optimizer in the draw function for some reason. - CDH
-*/
-static VVec3 __fastcall VEC_RGBToHSV_2(const VVec3& inRGB)
-{
-	float r = inRGB.x, g = inRGB.y, b = inRGB.z, v, x, f;
-	int i;
-	x = M_MIN3(r, g, b);
-	v = M_MAX3(r, g, b);
-	if (v == x)
-		return(VVec3(0, 0, v));
-	f = (r == x) ? g - b : ((g == x) ? b - r : r - g);
-	i = (r == x) ? 3 : ((g == x) ? 5 : 1);
-	return(VVec3((i-f/(v-x))/6.f, (v-x)/v, v));
-}
-
-static VVec3 __fastcall VEC_HSVToRGB_2(const VVec3& inHSV)
-{
-	float h = inHSV.x*6.f, s = inHSV.y, v = inHSV.z, m, n, f;
-	int i;
-	if (s == 0.f)
-		return(VVec3(v,v,v));
-	i = (int)h;
-	f = h - i;
-	if (!(i & 1))
-		f = 1 - f;
-	m = v * (1 - s);
-	n = v * (1 - s*f);
-	switch(i)
-	{
-		case 0: case 6: return(VVec3(v,n,m));
-		case 1:			return(VVec3(n,v,m));
-		case 2:			return(VVec3(m,v,n));
-		case 3:			return(VVec3(m,n,v));
-		case 4:			return(VVec3(n,m,v));
-		case 5:			return(VVec3(v,m,n));
-		default:		return(VVec3(0,0,0));
-	};
-}
-
-// CDH: This function used to be below as part of DrawMesh but MSVC++'s ridiculous optimizer kept fubaring because that function is too large.
-//      It is used to calculate vertex lighting when in HeatVision.  The name "StupidOptimizer" is intentional, as it is the most meaningful
-//		description of this function possible, since the function would not exist if the optimizer weren't so insipid.
-static void __fastcall StupidOptimizer(FSceneNode* Frame, UMeshInstance* MeshInst, ARenderActor* Owner, FTransTexture* Samples, INT NumVerts, const FCoords& Coords)
-{
-	FVector Center;
-	UDukeMeshInstance* DukeMesh = Cast<UDukeMeshInstance>(MeshInst);
-	CMacBone* ChestBone = NULL;
-	if (DukeMesh)
-		ChestBone = DukeMesh->Mac->FindBone( "Abdomen" );
-	if (ChestBone)
-	{
-		VCoords3 c(ChestBone->GetCoords(true));
-		FCoords fc(FVector(0,0,0), *((FVector*)&c.r.vX), *((FVector*)&c.r.vY), *((FVector*)&c.r.vZ));
-		fc = fc.ToUnr();
-		FCoords MeshCoords = DukeMesh->GetBasisCoords(GMath.UnitCoords);
-		FCoords BoneCoords = GMath.UnitCoords;
-		BoneCoords.XAxis = fc.XAxis.TransformVectorBy(MeshCoords); BoneCoords.XAxis.Normalize();
-		BoneCoords.YAxis = fc.YAxis.TransformVectorBy(MeshCoords); BoneCoords.YAxis.Normalize();
-		BoneCoords.ZAxis = fc.ZAxis.TransformVectorBy(MeshCoords); BoneCoords.ZAxis.Normalize();
-		BoneCoords.Origin = *((FVector*)&c.t); BoneCoords.Origin = BoneCoords.Origin.ToUnr();
-		BoneCoords.Origin = (BoneCoords.Origin - DukeMesh->Mac->mDukeOrigin).TransformPointBy(MeshCoords);
-		FCoords OutCoords = BoneCoords.Transpose();
-		Center = FVector(0,0,0).TransformPointBy(OutCoords);
-	} else 
-	{
-		FBox Bound = MeshInst->GetRenderBoundingBox(Owner, false);
-		Center = (Bound.Min + Bound.Max) * 0.5f;
-	}
-	Center = Center.TransformPointBy(Coords);
-	FCoords InvFrameCoords = Frame->Coords.Transpose();
-
-	FLOAT Radius2 = (FLOAT)Owner->HeatRadius;
-	FLOAT Falloff2 = Radius2 + Radius2*(1.f-((FLOAT)Owner->HeatFalloff/256.f));
-	for (INT i=0;i<NumVerts;i++)
-	{
-		FTransSample* Vert = &Samples[i];
-		FLOAT VHeat = 1.f;
-		FLOAT Dist2 = (Vert->Point - Center).Size();
-		if (Dist2 > Radius2)
-		{
-			if (Dist2 > Falloff2)
-				VHeat = 0.f;
-			else
-				VHeat = 1.f - ((Dist2 - Radius2) / (Falloff2 - Radius2));
-		}
-
-		FVector N = Vert->Normal.TransformVectorBy(InvFrameCoords);
-		VVec3 v(Vert->Light.X, Vert->Light.Y, Vert->Light.Z);
-		v = VEC_RGBToHSV_2((VVec3)v);
-		//v.x = (FLOAT)fmod(0.15f - ((M_Fabs(N.Z) * 0.15f) + (1.f-VHeat)*((FLOAT)Owner->HeatFalloff/255.f)) + 1.f, 1.f);
-		//v.x = VHeat;
-		FLOAT temp1 = (M_Fabs(N.Z) * 0.15f);
-		FLOAT temp2 = (1.f-VHeat)*(184.f/255.f);
-		FLOAT temp3 = temp1 + temp2;
-		v.x = (FLOAT)fmod(0.85f + temp3, 1.f);
-
-		v.x = Min(v.x, 1.f);
-		v.y = 1.f;
-		v.z = 1.f;// - v.x;
-		v = VEC_HSVToRGB_2(v);
-		Vert->Light = FVector(v.x, v.y, v.z);
-	}
-}
 
 // Draw a mesh map.
 void __fastcall URender::DrawMesh

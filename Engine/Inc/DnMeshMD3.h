@@ -119,7 +119,8 @@ typedef struct  {
 	UTexture			*texture;
 	char				name[512];
 	TArray<FVector>		vertexes;
+	TArray<int>			indexes;
 	TArray<FVector>		uv;
-} md3ExportSurface_t;
+} md3ImportSurface_t;
 
 #endif /* !__MODEL_MD3_H__ */

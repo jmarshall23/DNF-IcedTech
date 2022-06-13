@@ -5,10 +5,6 @@
 
 #define m_baseBoneCoords ((VCoords3 *)(m_baseBoneCoords))
 
-static VVec3 xAxis( 1, 0, 0 );
-static VVec3 yAxis( 0, 1, 0 );
-static VVec3 zAxis( 0, 0, 1 );
-
 IMPLEMENT_CLASS(ABoneRope);
 IMPLEMENT_CLASS(RopePrimitive);
 
@@ -16,87 +12,6 @@ IMPLEMENT_CLASS(RopePrimitive);
 
 #pragma warning(disable:4714)
 
-// JEP ...
-//====================================================================
-//	UpdateRopeRenderBox
-//====================================================================
-static void UpdateRopeRenderBox(ABoneRope *Rope)
-{
-	
-}
-// ... JEP
-
-//====================================================================
-//RotateOCS - Rotate an OCS about an axis by the specified angle
-//====================================================================
-void RotateOCS
-    (
-    VCoords3&   ocs, 
-    VVec3       axis,
-    float       angle
-    )
-{
-    ocs >>= VAxes3( axis, angle );
-}
-
-//====================================================================
-//RotateBone - Rotates the specified bone around the passed in axis and angle
-//====================================================================
-void RotateBone
-    (
-    CMacBone *bone,
-    VVec3    axis,
-    float    angle
-    )
-
-{
-    VCoords3 base;
-    VAxes3   rotAxes;
-
-    rotAxes = VAxes3( axis, angle );
-
-    base   = bone->GetCoords( false );
-    base.r <<= rotAxes;
-    bone->SetCoords( base, false );
-}
-
-
-//====================================================================
-//RotateBone - Converts a world OCS into the OCS of the bone
-//====================================================================
-void World2Bone
-    (
-    CMacBone    *bone,
-    VCoords3&   inWorldOCS
-    )
-{
-	VCoords3 tempCoord;
-
-	for (CMacBone *b = bone->mParent; b; b = b->mParent )
-    {
-        tempCoord <<= b->GetCoords(false);
-    }
-	inWorldOCS >>= tempCoord;
-}
-
-#if 0
-//====================================================================
-//Bone2World
-//====================================================================
-static void Bone2World
-    (
-    CMacBone *bone,
-    VCoords3& myBaseWorld
-    )
-{
-	myBaseWorld = bone->GetCoords(false);
-
-	for (CMacBone* b = bone->mParent; b; b = b->mParent )
-    {
-		myBaseWorld <<= b->GetCoords(false);
-    }
-}
-#endif
 
 //====================================================================
 //ABoneRope::ABoneRope
@@ -189,9 +104,7 @@ void ABoneRope::execCheckCollision
     )
 
 {
-    VVec3          xAxis( 1, 0, 0 );
-    VVec3          yAxis( 0, 1, 0 );
-    VVec3          zAxis( 0, 0, 1 );
+
 
     P_GET_VECTOR(point);
     P_GET_VECTOR(dir);

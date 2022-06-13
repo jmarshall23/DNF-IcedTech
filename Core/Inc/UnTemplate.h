@@ -986,6 +986,26 @@ public:
 		}
 		return *this;
 	}
+
+// jmarshall - this is awful.
+	FString StripExtension() {
+		FString t = *this;
+
+		const TCHAR* in = *t;
+		static TCHAR out_buffer[512];
+		TCHAR* out = &out_buffer[0];
+		
+
+		while (*in && *in != '.') {
+			*out++ = *in++;
+		}
+		*out = 0;
+		 
+		FString path = appToUnicode(out_buffer);
+		return path;
+	}
+// jmarshall end
+
 	FString& operator+=( const FString& Str )
 	{
 		return operator+=( *Str );

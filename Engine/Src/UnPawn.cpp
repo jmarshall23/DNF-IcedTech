@@ -3134,74 +3134,76 @@ FLOAT APawn::GetNetPriority( AActor* Recent, FLOAT Time, FLOAT Lag )
 -----------------------------------------------------------------------------*/
 void APlayerPawn::PositionPlayerOnRope( void )
 {   
-    CMacBone    *targetBone=NULL;
-    FCoords     targetBoneCoords;
-    FVector     delta(0,0,0), ropeDir(0,0,0);
-
-    if ( !this->currentRope )
-        return;
-
-    if ( this->boneRopeHandle == -1 )
-        return;
-   
-    ABoneRope *rope = this->currentRope;
-    UDukeMeshInstance *MeshInst = Cast<UDukeMeshInstance>( rope->GetMeshInstance() );
-
-    if ( !MeshInst )
-        return;
-
-    CMacBone *bone = (CMacBone*)rope->GetBoneFromHandle( this->boneRopeHandle );
-
-    if ( !bone )
-        return;
-
-    FCoords BoneCoords;
-
-    MeshInst->GetBoneCoords( bone, BoneCoords );    
-    BoneCoords = BoneCoords.Transpose();
-
-	targetBoneCoords = FCoords();            
-
-    // Assume that the current rope handle is between the first and last bone on the rope.  Because the server
-    // shouldn't let the player be on that particular bone.
-
-    if ( this->ropeOffset >= 0 ) 
-    {
-        // Currently going up the rope, calc dir to above bone
-        targetBone       = bone - 1;
-        MeshInst->GetBoneCoords( targetBone, targetBoneCoords );
-        targetBoneCoords = targetBoneCoords.Transpose();
-        delta            = targetBoneCoords.Origin - BoneCoords.Origin;
-        ropeDir          = delta;
-        ropeDir.Normalize();
-    }         
-    else if ( this->ropeOffset < 0 )
-    {
-        // Pushing down, or currently going down the rope, move towards the bone below
-        targetBone       = bone + 1;
-        MeshInst->GetBoneCoords( targetBone, targetBoneCoords );
-        targetBoneCoords = targetBoneCoords.Transpose();
-        delta            = targetBoneCoords.Origin - BoneCoords.Origin;
-        ropeDir          = -delta;
-        ropeDir.Normalize();
-    }
-    
-
-    FRotator tempRot;
-    FVector  forward,left,up;
-    tempRot = Rotation;
-
-    // Delta is how far we need to move to the rope
-    delta = BoneCoords.Origin + ( this->ropeOffset * ropeDir ) - this->Location;
-
-    ViewRotation.AngleVectors( forward, left, up );
-    tempRot.Pitch = 0;
-    
-    delta   += tempRot.Vector() * -rope->m_riderRopeOffset; // Offset from the rope in the direction we are looking
-    delta.Z += rope->m_riderVerticalOffset;                 // vertical offset
-    delta   += left * rope->m_riderHorizontalOffset;        // horizontal offset
-
-    moveSmooth( delta );
+// jmarshall - rope
+	//CMacBone    *targetBone=NULL;
+	//FCoords     targetBoneCoords;
+	//FVector     delta(0,0,0), ropeDir(0,0,0);
+	//
+	//if ( !this->currentRope )
+	//    return;
+	//
+	//if ( this->boneRopeHandle == -1 )
+	//    return;
+	//
+	//ABoneRope *rope = this->currentRope;
+	//UDukeMeshInstance *MeshInst = Cast<UDukeMeshInstance>( rope->GetMeshInstance() );
+	//
+	//if ( !MeshInst )
+	//    return;
+	//
+	//CMacBone *bone = (CMacBone*)rope->GetBoneFromHandle( this->boneRopeHandle );
+	//
+	//if ( !bone )
+	//    return;
+	//
+	//FCoords BoneCoords;
+	//
+	//MeshInst->GetBoneCoords( bone, BoneCoords );    
+	//BoneCoords = BoneCoords.Transpose();
+	//
+	//targetBoneCoords = FCoords();            
+	//
+	//// Assume that the current rope handle is between the first and last bone on the rope.  Because the server
+	//// shouldn't let the player be on that particular bone.
+	//
+	//if ( this->ropeOffset >= 0 ) 
+	//{
+	//    // Currently going up the rope, calc dir to above bone
+	//    targetBone       = bone - 1;
+	//    MeshInst->GetBoneCoords( targetBone, targetBoneCoords );
+	//    targetBoneCoords = targetBoneCoords.Transpose();
+	//    delta            = targetBoneCoords.Origin - BoneCoords.Origin;
+	//    ropeDir          = delta;
+	//    ropeDir.Normalize();
+	//}         
+	//else if ( this->ropeOffset < 0 )
+	//{
+	//    // Pushing down, or currently going down the rope, move towards the bone below
+	//    targetBone       = bone + 1;
+	//    MeshInst->GetBoneCoords( targetBone, targetBoneCoords );
+	//    targetBoneCoords = targetBoneCoords.Transpose();
+	//    delta            = targetBoneCoords.Origin - BoneCoords.Origin;
+	//    ropeDir          = -delta;
+	//    ropeDir.Normalize();
+	//}
+	//
+	//
+	//FRotator tempRot;
+	//FVector  forward,left,up;
+	//tempRot = Rotation;
+	//
+	//// Delta is how far we need to move to the rope
+	//delta = BoneCoords.Origin + ( this->ropeOffset * ropeDir ) - this->Location;
+	//
+	//ViewRotation.AngleVectors( forward, left, up );
+	//tempRot.Pitch = 0;
+	//
+	//delta   += tempRot.Vector() * -rope->m_riderRopeOffset; // Offset from the rope in the direction we are looking
+	//delta.Z += rope->m_riderVerticalOffset;                 // vertical offset
+	//delta   += left * rope->m_riderHorizontalOffset;        // horizontal offset
+	//
+	//moveSmooth( delta );
+// jmarshall end
 }
 
 /*-----------------------------------------------------------------------------

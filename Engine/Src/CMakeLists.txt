@@ -84,6 +84,9 @@ add_library(Engine SHARED
     DnCinematic.cpp
     dnclient.c
     DnMesh.cpp
+    DnMeshInstance.cpp
+    DnMeshMD3.cpp
+    DnMeshMD5.cpp
     dnParentalLock.cpp
     dnPlayerProfile.cpp
     dnSaveLoad.cpp
