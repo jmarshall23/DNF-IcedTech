@@ -115,11 +115,15 @@ typedef struct md3Header_s {
 	int			ofsEnd;				// end of file
 } md3Header_t;
 
+typedef struct {
+	TArray<FVector>		vertexes;
+	TArray<FVector>		uv;
+} md3ExportFrame_t;
+
 typedef struct  {
 	UTexture			*texture;
 	char				name[512];
-	TArray<FVector>		vertexes;
-	TArray<FVector>		uv;
+	TArray<md3ExportFrame_t> frames;
 } md3ExportSurface_t;
 
 #endif /* !__MODEL_MD3_H__ */

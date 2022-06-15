@@ -500,14 +500,14 @@ void UDukeMeshInstance::GatherExportMeshes(const char* fileName, const TArray< F
 				v.numWeights++;
 			}
 
-			mesh->verts.AddItem(v);
-
-			FDukeExportTri tri;
-			tri.tris[0] = (mesh->tris.Num() * 3) + 2;
-			tri.tris[1] = (mesh->tris.Num() * 3) + 1;
-			tri.tris[2] = (mesh->tris.Num() * 3) + 0;
-			mesh->tris.AddItem(tri);
+			mesh->verts.AddItem(v);			
 		}
+
+		FDukeExportTri tri;
+		tri.tris[0] = (mesh->tris.Num() * 3) + 2;
+		tri.tris[1] = (mesh->tris.Num() * 3) + 1;
+		tri.tris[2] = (mesh->tris.Num() * 3) + 0;
+		mesh->tris.AddItem(tri);
 	}
 }
 
@@ -732,68 +732,175 @@ void UDukeMeshInstance::ExportToMD3(const char* fileName)
 	{
 		return;
 	}
-
-	static VVec3 verts[6635];
-
-	int numVerts = Mac->EvaluateVerts(1, 1.0, &verts[0]);
+	OMacSequenceChannel* chan = OMacSequenceChannel::New(NULL);
+	Mac->mActorChannels[0] = chan;
 
 	static SMacTri TempTris[4096];
 	INT NumListTris = Mac->EvaluateTris(1, TempTris);
 
 	TArray<md3ExportSurface_t> meshes;
 
-	// First pass find all of the texture groups.
-	for (int i = 0; i < NumListTris; i++)
+	int exportFrame = 0;
+
+	if (Mac->mSequences.GetCount() > 0)
 	{
-		md3ExportSurface_t* mesh = nullptr;
-
-		if (TempTris[i].texture == nullptr)
-			continue;
-
-		if (TempTris[i].texture->imagePtr == nullptr)
-			continue;
-
-		for (int d = 0; d < meshes.Num(); d++)
+		for (int s = 0; s < Mac->mSequences.GetCount(); s++)
 		{
-			if (TempTris[i].texture->imagePtr == meshes(d).texture)
+			OCpjSequence* seq = Mac->mSequences[s];
+			seq->CacheIn();
+
+			int numFrames = seq->m_Frames.GetCount();
+			if (numFrames == 0)
+				continue;
+
+			for (int f = 0; f < numFrames; f++)
 			{
-				mesh = &meshes(d);
+				chan->mSequence = Mac->mSequences[s];
+				chan->mTime = ((float)f) / ((float)numFrames);
+				chan->mBlendAlpha = 1.0f;
+				chan->mBlendMode = MACSEQBLEND_SET;
+
+				VVec3 verts[6635];
+				if (!Mac->mActorChannels[0]->EvalVerts(Mac, Mac->mGeometry->m_Verts.GetCount(), nullptr, &verts[0]))
+					continue;
+
+				bool newFrame = false;
+
+				// First pass find all of the texture groups.
+				for (int i = 0; i < NumListTris; i++)
+				{
+					md3ExportSurface_t* mesh = nullptr;
+
+					if (TempTris[i].texture == nullptr)
+						continue;
+
+					if (TempTris[i].texture->imagePtr == nullptr)
+						continue;
+
+					for (int d = 0; d < meshes.Num(); d++)
+					{
+						if (TempTris[i].texture->imagePtr == meshes(d).texture)
+						{
+							mesh = &meshes(d);
+						}
+					}
+
+					if (exportFrame == 0 && f == 0)
+					{
+						if (mesh == nullptr)
+						{
+							md3ExportSurface_t newMesh;
+							newMesh.texture = (UTexture*)TempTris[i].texture->imagePtr;
+
+							char temp[512];
+							sprintf(temp, "%s", fileName);;
+							StripExtension(temp, temp);
+							sprintf(newMesh.name, "%s_%d", temp, meshes.Num());
+
+							ExportTexture(newMesh.texture, newMesh.name);
+
+							sprintf(newMesh.name, "%s_%d", SkipPath(temp), meshes.Num());
+
+							meshes.AddItem(newMesh);
+
+							mesh = &meshes(meshes.Num() - 1);
+						}
+					}
+
+					if (exportFrame >= mesh->frames.Num())
+					{
+						md3ExportFrame_t newFrame;
+						mesh->frames.AddItem(newFrame);
+					}
+
+					for (int d = 0; d < 3; d++)
+					{
+						int index = TempTris[i].vertIndex[d];
+
+						if (index >= Mac->mGeometry->m_Verts.GetCount())
+							assert(!"I really hate cannibal");
+
+						FVector xyz;
+						FVector uv;
+
+						memcpy(&xyz, &verts[index], sizeof(VVec3));
+						memcpy(&uv, TempTris[i].texUV[d], sizeof(VVec2));
+
+						//uv.Y = 1.0 - uv.Y;
+
+						mesh->frames(exportFrame).vertexes.AddItem(xyz);
+						mesh->frames(exportFrame).uv.AddItem(uv);
+					}
+
+				}
+
+				exportFrame++;
 			}
-		}
+		}	
+	}
+	
+	if(exportFrame == 0)
+	{
+		VVec3 verts[6635];
+		int numVerts = Mac->EvaluateVerts(1, 1.0, &verts[0]);
 
-		if (mesh == nullptr)
+		// First pass find all of the texture groups.
+		for (int i = 0; i < NumListTris; i++)
 		{
-			md3ExportSurface_t newMesh;
-			newMesh.texture = (UTexture*)TempTris[i].texture->imagePtr;
+			md3ExportSurface_t* mesh = nullptr;
 
-			char temp[512];
-			sprintf(temp, "%s", fileName);;
-			StripExtension(temp, temp);
-			sprintf(newMesh.name, "%s_%d", temp, meshes.Num());
+			if (TempTris[i].texture == nullptr)
+				continue;
 
-			ExportTexture(newMesh.texture, newMesh.name);
+			if (TempTris[i].texture->imagePtr == nullptr)
+				continue;
 
-			sprintf(newMesh.name, "%s_%d", SkipPath(temp), meshes.Num());
+			for (int d = 0; d < meshes.Num(); d++)
+			{
+				if (TempTris[i].texture->imagePtr == meshes(d).texture)
+				{
+					mesh = &meshes(d);
+				}
+			}
 
-			meshes.AddItem(newMesh);
+			if (mesh == nullptr)
+			{
+				md3ExportSurface_t newMesh;
+				newMesh.texture = (UTexture*)TempTris[i].texture->imagePtr;
 
-			mesh = &meshes(meshes.Num() - 1);
-		}
+				char temp[512];
+				sprintf(temp, "%s", fileName);;
+				StripExtension(temp, temp);
+				sprintf(newMesh.name, "%s_%d", temp, meshes.Num());
 
-		for (int d = 0; d < 3; d++)
-		{
-			int index = TempTris[i].vertIndex[d];
+				ExportTexture(newMesh.texture, newMesh.name);
 
-			FVector xyz;
-			FVector uv;
-			
-			memcpy(&xyz, &verts[index], sizeof(VVec3));
-			memcpy(&uv, TempTris[i].texUV[d], sizeof(VVec2));
+				sprintf(newMesh.name, "%s_%d", SkipPath(temp), meshes.Num());
 
-			//uv.Y = 1.0 - uv.Y;
+				meshes.AddItem(newMesh);
 
-			mesh->vertexes.AddItem(xyz);
-			mesh->uv.AddItem(uv);
+				mesh = &meshes(meshes.Num() - 1);
+
+				md3ExportFrame_t newFrame;
+				mesh->frames.AddItem(newFrame);
+			}
+
+			for (int d = 0; d < 3; d++)
+			{
+				int index = TempTris[i].vertIndex[d];
+
+				FVector xyz;
+				FVector uv;
+
+				memcpy(&xyz, &verts[index], sizeof(VVec3));
+				memcpy(&uv, TempTris[i].texUV[d], sizeof(VVec2));
+
+				//uv.Y = 1.0 - uv.Y;
+
+				mesh->frames(0).vertexes.AddItem(xyz);
+				mesh->frames(0).uv.AddItem(uv);
+			}
+
 		}
 	}
 
@@ -807,7 +914,7 @@ void UDukeMeshInstance::WriteToMD3(const char* fileName, const TArray<md3ExportS
 
 	header.ident = MD3_IDENT;
 	header.version = MD3_VERSION;
-	header.numFrames = 1;
+	header.numFrames = surfaces(0).frames.Num();
 	header.numSurfaces = surfaces.Num();
 	header.numSkins = surfaces.Num();
 	header.numTags = 0;
@@ -821,6 +928,9 @@ void UDukeMeshInstance::WriteToMD3(const char* fileName, const TArray<md3ExportS
 	for (int i = 0; i < header.numFrames; i++)
 	{
 		md3Frame_t frame = { };
+		frame.radius = 128;
+		frame.bounds[0] = FVector(-128, -128, - 128);
+		frame.bounds[1] = FVector(128, 128, 128);
 		fwrite(&frame, 1, sizeof(md3Frame_t), f);
 	}
 
@@ -830,33 +940,46 @@ void UDukeMeshInstance::WriteToMD3(const char* fileName, const TArray<md3ExportS
 		md3Surface_t surf = { };
 
 		sprintf(surf.name, "surf_%d", i);
+		surf.ident = MD3_IDENT;
 		surf.numFrames = header.numFrames;
 		surf.numShaders = 1;
-		surf.numTriangles = surfaces(i).vertexes.Num();
-		surf.numVerts = surfaces(i).vertexes.Num();
+		surf.numTriangles = surfaces(i).frames(0).vertexes.Num() / 3;
+		surf.numVerts = surfaces(i).frames(0).vertexes.Num();
 
 		int surfWriteLocation = ftell(f);
 		fwrite(&surf, 1, sizeof(md3Surface_t), f);
 
 		surf.ofsXyzNormals = ftell(f) - surfWriteLocation;
 
-		for (int d = 0; d < surfaces(i).vertexes.Num(); d++)
+		for (int frameId = 0; frameId < surf.numFrames; frameId++)
 		{
-			md3XyzNormal_t xyz;
+			const md3ExportFrame_t* frame = &surfaces(i).frames(frameId);
+			int numVertexes = frame->vertexes.Num();
 
-			xyz.xyz[0] = surfaces(i).vertexes(d).X / MD3_XYZ_SCALE;
-			xyz.xyz[1] = surfaces(i).vertexes(d).Y / MD3_XYZ_SCALE;
-			xyz.xyz[2] = surfaces(i).vertexes(d).Z / MD3_XYZ_SCALE;
+			if (frameId == 1)
+				frameId = frameId;
 
-			xyz.normal = 0;
+			for (int vertId = 0; vertId < numVertexes; vertId++)
+			{
+				md3XyzNormal_t xyz;
 
-			fwrite(&xyz, 1, sizeof(md3XyzNormal_t), f);
+				xyz.xyz[0] = frame->vertexes(vertId).X / MD3_XYZ_SCALE;
+				xyz.xyz[1] = frame->vertexes(vertId).Y / MD3_XYZ_SCALE;
+				xyz.xyz[2] = frame->vertexes(vertId).Z / MD3_XYZ_SCALE;
+
+				xyz.normal = 0;
+
+				fwrite(&xyz, 1, sizeof(md3XyzNormal_t), f);
+			}
+
+			fflush(f);
 		}
+		
 
 		surf.ofsTriangles = ftell(f) - surfWriteLocation;
 
 		int index = 0;
-		for (int d = 0; d < surfaces(i).vertexes.Num(); d++)
+		for (int d = 0; d < surf.numTriangles; d++)
 		{
 			md3Triangle_t tri;
 
@@ -870,12 +993,12 @@ void UDukeMeshInstance::WriteToMD3(const char* fileName, const TArray<md3ExportS
 		}
 
 		surf.ofsSt = ftell(f) - surfWriteLocation;
-		for (int d = 0; d < surfaces(i).uv.Num(); d++)
+		for (int d = 0; d < surf.numVerts; d++)
 		{
 			md3St_t st;
 
-			st.st[0] = surfaces(i).uv(d).X;
-			st.st[1] = surfaces(i).uv(d).Y;
+			st.st[0] = surfaces(i).frames(0).uv(d).X;
+			st.st[1] = surfaces(i).frames(0).uv(d).Y;
 			fwrite(&st, 1, sizeof(md3St_t), f);
 		}
 		surf.ofsShaders = ftell(f) - surfWriteLocation;
