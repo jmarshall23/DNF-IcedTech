@@ -3799,12 +3799,15 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 			fprintf(f, "Plane %s\n", exportPolys[i].name.c_str());
 			fprintf(f, "{\n");
 
-			for (int v = 0; v < exportPolys[i].vertexes.size(); v++)
+			for (int v = 0; v < exportPolys[i].vertexes.size(); v+=3)
 			{
-				CacheVertex* vert = &exportPolys[i].vertexes[v];
+				for (int g = 2; g >= 0; g--)
+				{
+					CacheVertex* vert = &exportPolys[i].vertexes[v + g];
 
-				fprintf(f, "\txyz %f %f %f\n", vert->xyz.X, vert->xyz.Z, -vert->xyz.Y);
-				fprintf(f, "\st %f %f\n", vert->st.X, vert->st.Y);
+					fprintf(f, "\txyz %f %f %f\n", vert->xyz.X, -vert->xyz.Z, -vert->xyz.Y);
+					fprintf(f, "\st %f %f\n", vert->st.X, -vert->st.Y);
+				}
 			}
 
 			fprintf(f, "}\n");
