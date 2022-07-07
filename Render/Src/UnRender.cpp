@@ -3664,6 +3664,12 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 			// Compute texture LOD.
 			UTexture* Texture = Poly->Texture ? Poly->Texture->Get(Viewport->CurrentTime) : Viewport->Actor->Level->DefaultTexture;
 
+			FTextureInfo info;
+			Texture->GetFuckingInfo(info);
+			
+			float width = 1.0f / (info.USize * (1 << 0) * info.UScale);
+			float height = 1.0f / (info.VSize * (1 << 0) * info.VScale);
+
 			const TCHAR* name = Texture->GetName();
 
 			const TCHAR* packageName = Texture->GetOuter()->GetName();
@@ -3701,6 +3707,8 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 				Model->Vectors(Poly->vNormal)
 			);
 
+			MapCoords *= Frame->Coords;
+
 			Pt = ((const FTransTexture*)Pts[0]);
 			TexPlane = (*(FVector*)Pt - MapCoords.Origin);
 			u = MapCoords.XAxis | TexPlane;
@@ -3710,8 +3718,8 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 			triPts[0][1] = Pt->Point.Y;
 			triPts[0][2] = Pt->Point.Z;
 
-			stPtrs[0][0] = u;
-			stPtrs[0][1] = v;
+			stPtrs[0][0] = (u - info.Pan.X) * width;
+			stPtrs[0][1] = (v - info.Pan.Y) * height;
 
 			for (i = 2; i < NumPts; i++) {
 				Pt = ((const FTransTexture*)Pts[i - 1]);
@@ -3722,8 +3730,8 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 				triPts[1][0] = Pt->Point.X;
 				triPts[1][1] = Pt->Point.Y;
 				triPts[1][2] = Pt->Point.Z;
-				stPtrs[1][0] = u;
-				stPtrs[1][1] = v;
+				stPtrs[1][0] = (u - info.Pan.X) * width;
+				stPtrs[1][1] = (v - info.Pan.Y) * height;
 
 
 				Pt = ((const FTransTexture*)Pts[i]);
@@ -3734,12 +3742,12 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 				triPts[2][0] = Pt->Point.X;
 				triPts[2][1] = Pt->Point.Y;
 				triPts[2][2] = Pt->Point.Z;
-				stPtrs[2][0] = u;
-				stPtrs[2][1] = v;
+				stPtrs[2][0] = (u - info.Pan.X) * width;
+				stPtrs[2][1] = (v - info.Pan.Y) * height;
 
 				for (int y = 0; y < 3; y++)
 				{
-					fprintf(f, "\txyz %f %f %f\n", triPts[y][0], -triPts[y][2], triPts[y][1]);
+					fprintf(f, "\txyz %f %f %f\n", triPts[y][0], triPts[y][2], -triPts[y][1]);
 					fprintf(f, "\st %f %f\n", stPtrs[y][0], stPtrs[y][1]);
 				}
 			}
