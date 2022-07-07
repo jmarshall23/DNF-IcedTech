@@ -3559,6 +3559,12 @@ FTransTexture** URender::StoreShitUnrealVertexes(INT iNode)
 	return LocalPts;
 }
 
+#define __PLACEMENT_NEW_INLINE // fuck unreal 1 
+#undef false // really fuck unreal 1
+#undef true  // really really fuck unreal 1
+#include <vector>
+#include <string>
+
 void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 {
 	UModel*				Model;
@@ -3642,6 +3648,21 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 
 	if (shouldExportMesh)
 	{
+		struct CacheVertex
+		{
+			FVector xyz;
+			FVector st;
+		};
+
+		struct CachePolygon
+		{
+			UTexture* texture;
+			std::string name;
+			std::vector<CacheVertex> vertexes;
+		};
+
+		std::vector< CachePolygon> exportPolys;
+
 		FILE* f = fopen("d:\\dnf\\mapexport.planes", "wb");
 
 		// Process everything in the world.
@@ -3663,6 +3684,25 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 
 			// Compute texture LOD.
 			UTexture* Texture = Poly->Texture ? Poly->Texture->Get(Viewport->CurrentTime) : Viewport->Actor->Level->DefaultTexture;
+
+			CachePolygon* exportPolygon = nullptr;
+
+			for (int r = 0; r < exportPolys.size(); r++)
+			{
+				if (exportPolys[r].texture == Texture)
+				{
+					exportPolygon = &exportPolys[r];
+					break;
+				}
+			}
+
+			if (exportPolygon == nullptr)
+			{
+				CachePolygon newPoly;
+				newPoly.texture = Texture;
+				exportPolys.push_back(newPoly);
+				exportPolygon = &exportPolys[exportPolys.size() - 1];
+			}
 
 			FTextureInfo info;
 			Texture->GetFuckingInfo(info);
@@ -3689,11 +3729,13 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 			sprintf(name2, appToAnsi(name));
 			sprintf(packageName2, appToAnsi(packageName));
 
-			fprintf(f, "Plane textures/%s/%s\n", packageName2, name2);
-			fprintf(f, "{\n");
+			char finalTexturePath[512];
+			sprintf(finalTexturePath, "textures/%s/%s", packageName2, name2);
+			exportPolygon->name = finalTexturePath;
 
-			float triPts[3][3];
-			float stPtrs[3][2];
+			//float triPts[3][3];
+			//float stPtrs[3][2];
+			CacheVertex cacheVertex[3];
 			INT i;
 			const FTransTexture* Pt;
 
@@ -3714,12 +3756,12 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 			u = MapCoords.XAxis | TexPlane;
 			v = MapCoords.YAxis | TexPlane;
 
-			triPts[0][0] = Pt->Point.X;
-			triPts[0][1] = Pt->Point.Y;
-			triPts[0][2] = Pt->Point.Z;
+			cacheVertex[0].xyz.X = Pt->Point.X;
+			cacheVertex[0].xyz.Y = Pt->Point.Y;
+			cacheVertex[0].xyz.Z = Pt->Point.Z;
 
-			stPtrs[0][0] = (u - info.Pan.X) * width;
-			stPtrs[0][1] = (v - info.Pan.Y) * height;
+			cacheVertex[0].st.X = (u - info.Pan.X) * width;
+			cacheVertex[0].st.Y = (v - info.Pan.Y) * height;
 
 			for (i = 2; i < NumPts; i++) {
 				Pt = ((const FTransTexture*)Pts[i - 1]);
@@ -3727,11 +3769,11 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 				u = MapCoords.XAxis | TexPlane;
 				v = MapCoords.YAxis | TexPlane;
 
-				triPts[1][0] = Pt->Point.X;
-				triPts[1][1] = Pt->Point.Y;
-				triPts[1][2] = Pt->Point.Z;
-				stPtrs[1][0] = (u - info.Pan.X) * width;
-				stPtrs[1][1] = (v - info.Pan.Y) * height;
+				cacheVertex[1].xyz.X = Pt->Point.X;
+				cacheVertex[1].xyz.Y = Pt->Point.Y;
+				cacheVertex[1].xyz.Z = Pt->Point.Z;
+				cacheVertex[1].st.X = (u - info.Pan.X) * width;
+				cacheVertex[1].st.Y = (v - info.Pan.Y) * height;
 
 
 				Pt = ((const FTransTexture*)Pts[i]);
@@ -3739,17 +3781,30 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 				u = MapCoords.XAxis | TexPlane;
 				v = MapCoords.YAxis | TexPlane;
 
-				triPts[2][0] = Pt->Point.X;
-				triPts[2][1] = Pt->Point.Y;
-				triPts[2][2] = Pt->Point.Z;
-				stPtrs[2][0] = (u - info.Pan.X) * width;
-				stPtrs[2][1] = (v - info.Pan.Y) * height;
+				cacheVertex[2].xyz.X = Pt->Point.X;
+				cacheVertex[2].xyz.Y = Pt->Point.Y;
+				cacheVertex[2].xyz.Z = Pt->Point.Z;
+				cacheVertex[2].st.X = (u - info.Pan.X) * width;
+				cacheVertex[2].st.Y = (v - info.Pan.Y) * height;
 
 				for (int y = 0; y < 3; y++)
 				{
-					fprintf(f, "\txyz %f %f %f\n", triPts[y][0], triPts[y][2], -triPts[y][1]);
-					fprintf(f, "\st %f %f\n", stPtrs[y][0], stPtrs[y][1]);
+					exportPolygon->vertexes.push_back(cacheVertex[y]);					
 				}
+			}		
+		}
+
+		for (int i = 0; i < exportPolys.size(); i++)
+		{
+			fprintf(f, "Plane %s\n", exportPolys[i].name.c_str());
+			fprintf(f, "{\n");
+
+			for (int v = 0; v < exportPolys[i].vertexes.size(); v++)
+			{
+				CacheVertex* vert = &exportPolys[i].vertexes[v];
+
+				fprintf(f, "\txyz %f %f %f\n", vert->xyz.X, vert->xyz.Z, -vert->xyz.Y);
+				fprintf(f, "\st %f %f\n", vert->st.X, vert->st.Y);
 			}
 
 			fprintf(f, "}\n");
