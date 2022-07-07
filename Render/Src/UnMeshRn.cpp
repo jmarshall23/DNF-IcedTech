@@ -325,5 +325,53 @@ void __fastcall URender::DrawMeshFast
 	DWORD			PolyFlagsEx
 )
 {
-	
+	if (DisableMeshes)
+		return;
+
+	if (!Owner->Mesh || !Owner->Mesh->IsA(UDukeMesh::StaticClass()))
+	{
+		debugf(_T("Attempted to render unsupported mesh format: %s"), Owner->GetName());
+		return;
+	}
+
+	ExtraFlags |= PF_Flat; // Currently disabled curved surfaces, too much performance drain
+
+	UDukeMesh* Mesh = (UDukeMesh*)Owner->Mesh;
+	UDukeMeshInstance* MeshInst = Cast<UDukeMeshInstance>(Mesh->GetInstance(Owner));
+
+	static FTransTexture Samples[65536];
+	int numVerts = MeshInst->Eval(&Samples[0]);
+
+	if (numVerts == 0)
+		return;
+
+	// Draw the triangles.
+	Frame->Viewport->RenDev->QueuePolygonBeginFast(Frame);
+
+	STAT(clock(GStat.MeshQueuePolygonCycles));		// JEP
+
+	for (INT i = 0; i < numVerts; i+=3)
+	{
+		FTransTexture* Pts[6];
+
+		// opaque and transparent pass
+		Pts[0] = &Samples[i + 0];
+		Pts[1] = &Samples[i + 1];
+		Pts[2] = &Samples[i + 2];
+
+		Pts[0]->Project(Frame);
+		Pts[1]->Project(Frame);
+		Pts[2]->Project(Frame);
+
+		if (Frame->Mirror == -1)
+			Exchange(Pts[2], Pts[0]);
+
+		Frame->Viewport->RenDev->QueuePolygonFast(Pts, 3);
+	} // VisibleTriangles
+
+	STAT(unclock(GStat.MeshQueuePolygonCycles));		// JEP
+
+	// Dump normal mesh polys:
+	check(Frame && Frame->Viewport && Frame->Viewport->RenDev);
+	Frame->Viewport->RenDev->QueuePolygonEndFast();
 }
