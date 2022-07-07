@@ -3527,6 +3527,38 @@ void __fastcall URender::OccludeProjector(FSceneNode* Frame, INT ProjectorIndex)
 }
 // ...JEP
 
+FTransTexture** URender::StoreShitUnrealVertexes(INT iNode)
+{
+	static FTransTexture* LocalPts[FBspNode::MAX_FINAL_VERTICES];
+
+	// Transform.
+	//STAT(GStat.NumTransform++);
+	FBspNode* Node = &GNodes[iNode];
+	INT       NumPts = Node->NumVertices;
+	FVert* VertPool = &GVerts[Node->iVertPool];
+	BYTE      Outcode = FVF_OutReject;
+	BYTE      AllCodes = 0;
+	for (INT i = 0; i < NumPts; i++)
+	{
+		INT pPoint = VertPool[i].pVertex;
+		FStampedPoint& S = PointCache[pPoint];
+
+		if (S.Stamp != Stamp)
+		{
+			S.Stamp = Stamp;
+			S.Point = new(VectorMem)FTransTexture;
+			Pipe(*S.Point, GFrame, (*GPoints)(pPoint));
+			//STAT(GStat.NumPoints++);
+		}
+		LocalPts[i] = (FTransTexture *)S.Point;
+		BYTE Flags = S.Point->Flags;
+		Outcode &= Flags;
+		AllCodes |= Flags;
+	}	
+
+	return LocalPts;
+}
+
 void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 {
 	UModel*				Model;
@@ -3605,6 +3637,208 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 	GPoints				= &Model->Points;
 	FLOAT TimeSeconds   = Frame->Level->GetLevelInfo()->TimeSeconds;
 	Model->Zones[iViewZone].LastRenderTime = TimeSeconds;
+
+	static bool shouldExportMesh = false;
+
+	if (shouldExportMesh)
+	{
+		FILE* f = fopen("d:\\dnf\\mapexport.planes", "wb");
+
+		// Process everything in the world.
+		for(iNode = 0; iNode < Model->Nodes.Num(); iNode++)
+		{
+			Node = &GNodes[iNode];
+			Poly = &GSurfs[Node->iSurf];
+
+			INT		NumPts = Node->NumVertices;
+			if(NumPts <= 0)
+				continue;
+
+			FVert* VertPool = &GVerts[Node->iVertPool];
+
+			PolyFlags = Poly->PolyFlags | ExtraPolyFlags;
+			PolyFlagsEx = Poly->PolyFlags2;
+			if ((PolyFlags & PF_Portal) && iViewZone == 0)
+				continue;
+
+			// Compute texture LOD.
+			UTexture* Texture = Poly->Texture ? Poly->Texture->Get(Viewport->CurrentTime) : Viewport->Actor->Level->DefaultTexture;
+
+			const TCHAR* name = Texture->GetName();
+
+			const TCHAR* packageName = Texture->GetOuter()->GetName();
+
+			if (Texture->GetOuter()->GetOuter())
+			{
+				packageName = Texture->GetOuter()->GetOuter()->GetName();
+			}
+
+			char name2[512];
+			char packageName2[512];
+
+			static FTransTexture** Pts;
+
+			Pts = StoreShitUnrealVertexes(iNode);
+
+			sprintf(name2, appToAnsi(name));
+			sprintf(packageName2, appToAnsi(packageName));
+
+			fprintf(f, "Plane textures/%s/%s\n", packageName2, name2);
+			fprintf(f, "{\n");
+
+			float triPts[3][3];
+			float stPtrs[3][2];
+			INT i;
+			const FTransTexture* Pt;
+
+			FVector TexPlane;
+			FLOAT u, v;
+			FCoords MapCoords = FCoords
+			(
+				Model->Points(Poly->pBase),
+				Model->Vectors(Poly->vTextureU),
+				Model->Vectors(Poly->vTextureV),
+				Model->Vectors(Poly->vNormal)
+			);
+
+			Pt = ((const FTransTexture*)Pts[0]);
+			TexPlane = (*(FVector*)Pt - MapCoords.Origin);
+			u = MapCoords.XAxis | TexPlane;
+			v = MapCoords.YAxis | TexPlane;
+
+			triPts[0][0] = Pt->Point.X;
+			triPts[0][1] = Pt->Point.Y;
+			triPts[0][2] = Pt->Point.Z;
+
+			stPtrs[0][0] = u;
+			stPtrs[0][1] = v;
+
+			for (i = 2; i < NumPts; i++) {
+				Pt = ((const FTransTexture*)Pts[i - 1]);
+				TexPlane = (*(FVector*)Pt - MapCoords.Origin);
+				u = MapCoords.XAxis | TexPlane;
+				v = MapCoords.YAxis | TexPlane;
+
+				triPts[1][0] = Pt->Point.X;
+				triPts[1][1] = Pt->Point.Y;
+				triPts[1][2] = Pt->Point.Z;
+				stPtrs[1][0] = u;
+				stPtrs[1][1] = v;
+
+
+				Pt = ((const FTransTexture*)Pts[i]);
+				TexPlane = (*(FVector*)Pt - MapCoords.Origin);
+				u = MapCoords.XAxis | TexPlane;
+				v = MapCoords.YAxis | TexPlane;
+
+				triPts[2][0] = Pt->Point.X;
+				triPts[2][1] = Pt->Point.Y;
+				triPts[2][2] = Pt->Point.Z;
+				stPtrs[2][0] = u;
+				stPtrs[2][1] = v;
+
+				for (int y = 0; y < 3; y++)
+				{
+					fprintf(f, "\txyz %f %f %f\n", triPts[y][0], -triPts[y][2], triPts[y][1]);
+					fprintf(f, "\st %f %f\n", stPtrs[y][0], stPtrs[y][1]);
+				}
+			}
+
+			fprintf(f, "}\n");
+		}
+
+		fclose(f);
+	}
+
+	iNode = 0;
+#if 0
+	if (shouldExportMesh)
+	{
+		
+
+		// Draw everything in the world.
+		for(int i = 0; i < Model->Surfs.Num(); i++)
+		{
+			NumPts = ClipBspSurf(iNode, Pts);
+			if (!NumPts)
+				continue;
+
+			// Setup for this surface.
+			FBspSurf* Surf = &Model->Surfs(i);
+
+			// Compute texture LOD.
+			UTexture* Texture = Surf->Texture ? Surf->Texture->Get(Viewport->CurrentTime) : Viewport->Actor->Level->DefaultTexture;
+
+			// Make SurfaceFacet.
+			FSurfaceFacet Facet;
+			Facet.Polys = Draw->Polys;
+			Facet.Span = &Draw->Span;
+			Facet.MapCoords = FCoords
+			(
+				Model->Points(Surf->pBase),
+				Model->Vectors(Surf->vTextureU),
+				Model->Vectors(Surf->vTextureV),
+				Model->Vectors(Surf->vNormal)
+			);
+
+			// Update facet.
+			Facet.MapCoords *= Frame->Coords;
+
+			const TCHAR* name = Texture->GetName();
+
+			const TCHAR* packageName = Texture->GetOuter()->GetOuter()->GetName();
+
+			char name2[512];
+			char packageName2[512];
+
+			sprintf(name2, appToAnsi(name));
+			sprintf(packageName2, appToAnsi(packageName));
+
+			fprintf(f, "Plane textures/%s/%s\n", packageName2, name2);
+			fprintf(f, "{\n");
+
+			for (FSavedPoly* Poly = Facet.Polys; Poly; Poly = Poly->Next) {
+				INT NumPts = Poly->NumPts;
+				float triPts[3][3];
+				float stPtrs[3][2];
+				INT i;
+				const FTransTexture* Pt;
+
+				Pt = (const FTransTexture*)Poly->Pts[0];
+				triPts[0][0] = Pt->Point.X;
+				triPts[0][1] = Pt->Point.Y;
+				triPts[0][2] = Pt->Point.Z;
+
+				stPtrs[0][0] = Pt->U;
+				stPtrs[0][1] = Pt->V;
+
+				for (i = 2; i < NumPts; i++) {
+					Pt = (const FTransTexture*)Poly->Pts[i - 1];
+					triPts[1][0] = Pt->Point.X;
+					triPts[1][1] = Pt->Point.Y;
+					triPts[1][2] = Pt->Point.Z;
+					stPtrs[1][0] = Pt->U;
+					stPtrs[1][1] = Pt->V;
+
+					Pt = (const FTransTexture*)Poly->Pts[i];
+					triPts[2][0] = Pt->Point.X;
+					triPts[2][1] = Pt->Point.Y;
+					triPts[2][2] = Pt->Point.Z;
+					stPtrs[2][0] = Pt->U;
+					stPtrs[2][1] = Pt->V;
+
+					for (int y = 0; y < 3; y++)
+					{
+						fprintf(f, "\txyz %f %f %f\n", triPts[y][0], -triPts[y][2], triPts[y][1]);
+						fprintf(f, "\st %f %f\n", stPtrs[y][0], stPtrs[y][1]);
+					}
+				}
+			}
+
+			fprintf(f, "}\n");
+		}		
+	}
+#endif
 
 	// If inside a warp zone, skip out and give this span buffer to the other side.
 	AWarpZoneInfo* Warp = (AWarpZoneInfo*)Model->Zones[iViewZone].ZoneActor;
@@ -3748,6 +3982,9 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 			{
 				// Note: Can't zone mask reject coplanars due to moving brush rules.
 				Poly		= &GSurfs[Node->iSurf];
+				// justin
+
+
 				PolyFlags	= Poly->PolyFlags | ExtraPolyFlags;
 				PolyFlagsEx	= Poly->PolyFlags2;
 				// Backface and portal reject.
