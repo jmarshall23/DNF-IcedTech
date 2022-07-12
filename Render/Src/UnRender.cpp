@@ -3547,7 +3547,9 @@ FTransTexture** URender::StoreShitUnrealVertexes(INT iNode)
 		{
 			S.Stamp = Stamp;
 			S.Point = new(VectorMem)FTransTexture;
-			Pipe(*S.Point, GFrame, (*GPoints)(pPoint));
+			//Pipe(*S.Point, GFrame, (*GPoints)(pPoint));
+
+			S.Point->Point = (*GPoints)(pPoint);
 			//STAT(GStat.NumPoints++);
 		}
 		LocalPts[i] = (FTransTexture *)S.Point;
@@ -3749,7 +3751,7 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 				Model->Vectors(Poly->vNormal)
 			);
 
-			MapCoords *= Frame->Coords;
+			//MapCoords *= Frame->Coords;
 
 			Pt = ((const FTransTexture*)Pts[0]);
 			TexPlane = (*(FVector*)Pt - MapCoords.Origin);
@@ -3805,7 +3807,7 @@ void __fastcall URender::OccludeBsp( FSceneNode* Frame )
 				{
 					CacheVertex* vert = &exportPolys[i].vertexes[v + g];
 
-					fprintf(f, "\txyz %f %f %f\n", vert->xyz.X, -vert->xyz.Z, -vert->xyz.Y);
+					fprintf(f, "\txyz %f %f %f\n", vert->xyz.X, vert->xyz.Y, vert->xyz.Z);
 					fprintf(f, "\st %f %f\n", vert->st.X, -vert->st.Y);
 				}
 			}
